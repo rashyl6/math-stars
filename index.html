@@ -544,39 +544,141 @@
 
         .theme-selector {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
+            flex-direction: column;
+            gap: 12px;
             margin: 15px 0;
         }
 
-        .theme-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 3px solid transparent;
+        .skin-card {
+            background: white;
+            border-radius: 15px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: all 0.3s;
+            border: 3px solid transparent;
             position: relative;
+            overflow: hidden;
         }
 
-        .theme-btn.selected {
-            border-color: #333;
-            transform: scale(1.1);
+        .skin-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
         }
 
-        .theme-btn.locked {
-            opacity: 0.4;
-            cursor: not-allowed;
+        .skin-card.selected {
+            border-color: var(--primary);
         }
 
-        .theme-btn.locked::after {
-            content: '🔒';
+        .skin-card.locked {
+            opacity: 0.85;
+        }
+
+        .skin-mascot {
+            font-size: 2.5em;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .skin-info {
+            flex: 1;
+            text-align: left;
+            min-width: 0;
+        }
+
+        .skin-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .skin-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--text);
+        }
+
+        .skin-rarity {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .rarity-common { background: #dfe6e9; color: #636e72; }
+        .rarity-uncommon { background: #55efc4; color: #00b894; }
+        .rarity-rare { background: #74b9ff; color: #0984e3; }
+        .rarity-epic { background: #a29bfe; color: #6c5ce7; }
+        .rarity-legendary { background: #ffeaa7; color: #fdcb6e; }
+        .rarity-mythic { background: linear-gradient(90deg, #fd79a8, #a29bfe, #74b9ff); color: white; }
+
+        .skin-desc {
+            font-size: 0.85em;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .skin-progress {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skin-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .skin-cost {
+            font-size: 0.8em;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .skin-badge {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 8px;
+            right: 8px;
+            font-size: 0.7em;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .badge-owned {
+            background: #00b894;
+            color: white;
+        }
+
+        .badge-equipped {
+            background: var(--primary);
+            color: white;
+        }
+
+        .coins-display {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border-radius: 15px;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             font-size: 1.2em;
+            font-weight: bold;
+            color: #6c5ce7;
         }
 
         .theme-default { background: linear-gradient(135deg, #667eea, #f093fb); }
@@ -951,19 +1053,22 @@
 
         <!-- Settings Screen -->
         <div class="screen" id="settingsScreen">
-            <h2 class="title">Inställningar</h2>
+            <h2 class="title">⚙️ Inställningar</h2>
 
             <h3 style="margin: 15px 0 10px; color: #666;">Välj tabeller att öva</h3>
             <div class="table-select" id="tableSelect"></div>
 
-            <h3 style="margin: 15px 0 10px; color: #666;">Välj tema</h3>
-            <div class="theme-selector" id="themeSelector"></div>
-            <p style="font-size: 0.8em; color: #888;">Lås upp fler teman genom att samla poäng!</p>
-
             <h3 style="margin: 15px 0 10px; color: #666;">Ljud</h3>
             <button class="nav-btn" id="soundToggle" onclick="toggleSound()">🔊 Ljud på</button>
 
-            <br><br>
+            <h3 style="margin: 20px 0 10px; color: var(--secondary);">🎨 Skin Shop</h3>
+            <div class="coins-display">
+                <span>💰</span>
+                <span>Dina poäng: <span id="shopCoins">0</span></span>
+            </div>
+            <div class="theme-selector" id="themeSelector"></div>
+
+            <br>
             <button class="nav-btn" onclick="showScreen('startScreen')">🏠 Tillbaka</button>
         </div>
 
@@ -1610,13 +1715,13 @@
 
         // ==================== THEMES ====================
         const themes = {
-            default: { name: 'Standard', cost: 0, mascot: '🌟', vibe: 'chill' },
-            space: { name: 'Rymd', cost: 2000, mascot: '👽', vibe: 'alien' },
-            ocean: { name: 'Hav', cost: 2000, mascot: '🐬', vibe: 'wave' },
-            forest: { name: 'Skog', cost: 2500, mascot: '🍄', vibe: 'nature' },
-            unicorn: { name: 'Enhörning', cost: 5000, mascot: '🦄', vibe: 'sparkle' },
-            skull: { name: 'Skibidi', cost: 7500, mascot: '💀', vibe: 'brainrot' },
-            goat: { name: 'GOAT', cost: 10000, mascot: '🐐', vibe: 'goated' }
+            default: { name: 'Standard', cost: 0, mascot: '🌟', vibe: 'chill', desc: 'Klassisk och fin!', rarity: 'common' },
+            space: { name: 'Rymd', cost: 2000, mascot: '👽', vibe: 'alien', desc: 'Utforska galaxen!', rarity: 'uncommon' },
+            ocean: { name: 'Hav', cost: 2000, mascot: '🐬', vibe: 'wave', desc: 'Dyk ner i djupet!', rarity: 'uncommon' },
+            forest: { name: 'Skog', cost: 3000, mascot: '🍄', vibe: 'nature', desc: 'Mysigt i skogen!', rarity: 'rare' },
+            unicorn: { name: 'Enhörning', cost: 5000, mascot: '🦄', vibe: 'sparkle', desc: 'Magiskt och glittrigt!', rarity: 'epic' },
+            skull: { name: 'Skibidi', cost: 7500, mascot: '💀', vibe: 'brainrot', desc: 'Maximum brain rot! 🧠', rarity: 'legendary' },
+            goat: { name: 'GOAT', cost: 10000, mascot: '🐐', vibe: 'goated', desc: 'För de GOATED! No cap!', rarity: 'mythic' }
         };
 
         function applyTheme(themeName) {
@@ -1629,22 +1734,60 @@
             const container = document.getElementById('themeSelector');
             container.innerHTML = '';
 
-            for (const [key, theme] of Object.entries(themes)) {
-                const btn = document.createElement('button');
-                btn.className = `theme-btn theme-${key}`;
+            // Update coins display
+            document.getElementById('shopCoins').textContent = gameState.totalScore;
 
+            for (const [key, theme] of Object.entries(themes)) {
                 const isUnlocked = gameState.unlockedThemes.includes(key);
                 const isSelected = gameState.currentTheme === key;
+                const progress = Math.min(100, (gameState.totalScore / theme.cost) * 100);
+                const canAfford = gameState.totalScore >= theme.cost;
 
-                if (!isUnlocked) btn.classList.add('locked');
-                if (isSelected) btn.classList.add('selected');
+                const card = document.createElement('div');
+                card.className = `skin-card${isSelected ? ' selected' : ''}${!isUnlocked ? ' locked' : ''}`;
 
-                btn.title = isUnlocked ? theme.name : `${theme.name} (${theme.cost} poäng)`;
-                btn.onclick = () => {
+                // Badge (EQUIPPED or OWNED)
+                let badgeHTML = '';
+                if (isSelected) {
+                    badgeHTML = '<span class="skin-badge badge-equipped">EQUIPPED</span>';
+                } else if (isUnlocked) {
+                    badgeHTML = '<span class="skin-badge badge-owned">OWNED</span>';
+                }
+
+                // Progress bar color based on rarity
+                const rarityColors = {
+                    common: '#636e72',
+                    uncommon: '#00b894',
+                    rare: '#0984e3',
+                    epic: '#6c5ce7',
+                    legendary: '#fdcb6e',
+                    mythic: 'linear-gradient(90deg, #fd79a8, #a29bfe, #74b9ff)'
+                };
+                const progressColor = rarityColors[theme.rarity] || '#667eea';
+
+                card.innerHTML = `
+                    ${badgeHTML}
+                    <div class="skin-mascot theme-${key}">${theme.mascot}</div>
+                    <div class="skin-info">
+                        <div class="skin-header">
+                            <span class="skin-name">${theme.name}</span>
+                            <span class="skin-rarity rarity-${theme.rarity}">${theme.rarity}</span>
+                        </div>
+                        <div class="skin-desc">${theme.desc}</div>
+                        ${!isUnlocked ? `
+                            <div class="skin-progress">
+                                <div class="skin-progress-fill" style="width: ${progress}%; background: ${progressColor};"></div>
+                            </div>
+                            <div class="skin-cost">${canAfford ? '✅ Klicka för att låsa upp!' : `${gameState.totalScore} / ${theme.cost} poäng`}</div>
+                        ` : ''}
+                    </div>
+                `;
+
+                card.onclick = () => {
                     if (isUnlocked) {
                         applyTheme(key);
                         renderThemeSelector();
-                    } else if (gameState.totalScore >= theme.cost) {
+                    } else if (canAfford) {
                         gameState.unlockedThemes.push(key);
                         gameState.totalScore -= theme.cost;
                         applyTheme(key);
@@ -1655,7 +1798,7 @@
                     }
                 };
 
-                container.appendChild(btn);
+                container.appendChild(card);
             }
         }
 
