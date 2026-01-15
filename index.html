@@ -867,6 +867,12 @@
             color: var(--text-light);
         }
 
+        .profile-coins {
+            color: #f39c12;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
         /* Leaderboard Styles */
         .leaderboard {
             margin: 15px 0;
@@ -981,8 +987,18 @@
             <h1 class="title">Math Stars</h1>
             <p class="subtitle">Multiplikationsäventyr!</p>
 
+            <div id="existingProfiles" style="display: none; margin-bottom: 20px;">
+                <h3 style="color: var(--secondary); margin-bottom: 15px;">Välj din profil:</h3>
+                <div id="profileList"></div>
+            </div>
+
             <div id="loginForm">
-                <h3 style="color: var(--secondary); margin: 20px 0 10px;">Vad heter du?</h3>
+                <div id="newProfileHeader" style="display: none;">
+                    <div style="border-top: 2px solid #eee; margin: 20px 0; padding-top: 20px;">
+                        <h3 style="color: var(--text-light); margin-bottom: 10px;">Eller skapa ny profil:</h3>
+                    </div>
+                </div>
+                <h3 style="color: var(--secondary); margin: 10px 0 10px;" id="nameLabel">Vad heter du?</h3>
                 <input type="text" class="name-input" id="nameInput" placeholder="Ditt namn..." maxlength="15">
 
                 <h3 style="color: var(--secondary); margin: 20px 0 10px;">Välj din figur!</h3>
@@ -991,11 +1007,6 @@
                 <button class="start-btn" onclick="createProfile()" id="createProfileBtn" disabled>
                     🚀 Börja spela!
                 </button>
-            </div>
-
-            <div id="existingProfiles" style="display: none; margin-top: 30px;">
-                <h3 style="color: var(--text-light); margin-bottom: 15px;">Eller välj en befintlig profil:</h3>
-                <div id="profileList"></div>
             </div>
         </div>
 
@@ -1006,6 +1017,7 @@
                 <div class="profile-info">
                     <div class="profile-name" id="currentName">Spelare</div>
                     <div class="profile-level" id="currentLevel">Nivå 1</div>
+                    <div class="profile-coins">💰 <span id="currentCoins">0</span> poäng</div>
                     <button class="nav-btn switch-profile-btn" onclick="showScreen('loginScreen'); loadExistingProfiles();">Byt profil</button>
                 </div>
             </div>
@@ -1397,22 +1409,30 @@
             const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
             const container = document.getElementById('existingProfiles');
             const list = document.getElementById('profileList');
+            const newProfileHeader = document.getElementById('newProfileHeader');
 
             if (profiles.length === 0) {
                 container.style.display = 'none';
+                newProfileHeader.style.display = 'none';
                 return;
             }
 
             container.style.display = 'block';
+            newProfileHeader.style.display = 'block';
             list.innerHTML = '';
 
             profiles.forEach(profile => {
+                // Load saved state to show level/coins
+                const savedState = localStorage.getItem(`mathStars_${profile.id}_state`);
+                const state = savedState ? JSON.parse(savedState) : { level: 1, totalScore: 0 };
+
                 const div = document.createElement('div');
                 div.className = 'leaderboard-entry';
                 div.style.cursor = 'pointer';
                 div.innerHTML = `
                     <span class="leaderboard-avatar">${profile.avatar}</span>
                     <span class="leaderboard-name">${profile.name}</span>
+                    <span class="leaderboard-level">Nivå ${state.level} • 💰 ${state.totalScore}</span>
                 `;
                 div.onclick = () => selectExistingProfile(profile);
                 list.appendChild(div);
@@ -1433,6 +1453,7 @@
             document.getElementById('currentAvatar').textContent = currentProfile.avatar;
             document.getElementById('currentName').textContent = currentProfile.name;
             document.getElementById('currentLevel').textContent = `Nivå ${gameState.level}`;
+            document.getElementById('currentCoins').textContent = gameState.totalScore;
         }
 
         function loadCurrentProfile() {
