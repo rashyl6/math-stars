@@ -63,6 +63,62 @@
             --card-bg: rgba(255,255,255,0.98);
         }
 
+        /* Theme: Skibidi/Skull */
+        .theme-skull {
+            --primary: #1a1a1a;
+            --secondary: #ff0044;
+            --accent: #00ff88;
+            --bg-start: #0d0d0d;
+            --bg-mid: #1a1a1a;
+            --bg-end: #2d1f3d;
+            --card-bg: rgba(20,20,20,0.95);
+            --text: #fff;
+            --text-light: #aaa;
+        }
+
+        .theme-skull .container {
+            color: #fff;
+            border: 2px solid #ff0044;
+            box-shadow: 0 0 30px rgba(255,0,68,0.5), 0 0 60px rgba(0,255,136,0.3);
+        }
+
+        .theme-skull .title {
+            animation: glitch 0.5s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(-2px, 2px); }
+            94% { transform: translate(2px, -2px); }
+            96% { transform: translate(-2px, -2px); }
+            98% { transform: translate(2px, 2px); }
+        }
+
+        /* Theme: GOAT */
+        .theme-goat {
+            --primary: #ffd700;
+            --secondary: #ff8c00;
+            --accent: #fff700;
+            --bg-start: #1a1a2e;
+            --bg-mid: #16213e;
+            --bg-end: #0f3460;
+            --card-bg: rgba(255,255,255,0.95);
+        }
+
+        .theme-goat .container {
+            border: 3px solid gold;
+            box-shadow: 0 0 40px rgba(255,215,0,0.6);
+        }
+
+        .theme-goat .title {
+            animation: rainbow 2s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
@@ -499,6 +555,8 @@
         .theme-ocean { background: linear-gradient(135deg, #03045e, #00b4d8); }
         .theme-forest { background: linear-gradient(135deg, #1b4332, #52b788); }
         .theme-unicorn { background: linear-gradient(135deg, #ff6b9d, #ffc8dd); }
+        .theme-skull { background: linear-gradient(135deg, #0d0d0d, #ff0044); }
+        .theme-goat { background: linear-gradient(135deg, #ffd700, #ff8c00); }
 
         .boss-emoji {
             font-size: 4em;
@@ -1041,7 +1099,7 @@
         }
 
         // ==================== AVATARS ====================
-        const avatars = ['🦊', '🐱', '🐶', '🐰', '🐼', '🦁', '🐸', '🦋', '🌸', '⭐', '🌈', '🦄', '🐬', '🦩', '🐝'];
+        const avatars = ['🦊', '🐱', '🐶', '🐰', '🐼', '🦁', '🐸', '🦋', '🌸', '⭐', '🌈', '🦄', '🐬', '🦩', '🐝', '💀', '👽', '🤖', '👻', '🔥'];
 
         let selectedAvatar = null;
         let currentProfile = null;
@@ -1429,11 +1487,13 @@
 
         // ==================== THEMES ====================
         const themes = {
-            default: { name: 'Standard', cost: 0 },
-            space: { name: 'Rymd', cost: 500 },
-            ocean: { name: 'Hav', cost: 500 },
-            forest: { name: 'Skog', cost: 500 },
-            unicorn: { name: 'Enhörning', cost: 1000 }
+            default: { name: 'Standard', cost: 0, mascot: '🌟', vibe: 'chill' },
+            space: { name: 'Rymd', cost: 2000, mascot: '👽', vibe: 'alien' },
+            ocean: { name: 'Hav', cost: 2000, mascot: '🐬', vibe: 'wave' },
+            forest: { name: 'Skog', cost: 2500, mascot: '🍄', vibe: 'nature' },
+            unicorn: { name: 'Enhörning', cost: 5000, mascot: '🦄', vibe: 'sparkle' },
+            skull: { name: 'Skibidi', cost: 7500, mascot: '💀', vibe: 'brainrot' },
+            goat: { name: 'GOAT', cost: 10000, mascot: '🐐', vibe: 'goated' }
         };
 
         function applyTheme(themeName) {
@@ -1674,27 +1734,59 @@
 
         // ==================== ACHIEVEMENTS ====================
         const achievements = [
-            { id: 'first_correct', name: 'Första stjärnan', icon: '⭐', desc: 'Svara rätt 1 gång', condition: (s) => s.totalCorrect >= 1 },
-            { id: 'ten_correct', name: 'Stigande stjärna', icon: '🌟', desc: 'Svara rätt 10 gånger', condition: (s) => s.totalCorrect >= 10 },
-            { id: 'fifty_correct', name: 'Superstjärna', icon: '💫', desc: 'Svara rätt 50 gånger', condition: (s) => s.totalCorrect >= 50 },
-            { id: 'hundred_correct', name: 'Mattetrollkarl', icon: '🧙‍♀️', desc: 'Svara rätt 100 gånger', condition: (s) => s.totalCorrect >= 100 },
-            { id: 'streak_5', name: 'På gång', icon: '🔥', desc: 'Få en svit på 5', condition: (s) => s.bestStreak >= 5 },
-            { id: 'streak_10', name: 'Ostoppbar', icon: '🚀', desc: 'Få en svit på 10', condition: (s) => s.bestStreak >= 10 },
-            { id: 'streak_20', name: 'Legend', icon: '👑', desc: 'Få en svit på 20', condition: (s) => s.bestStreak >= 20 },
-            { id: 'level_5', name: 'Blir bra', icon: '📚', desc: 'Nå nivå 5', condition: (s) => s.level >= 5 },
-            { id: 'level_10', name: 'Matteexpert', icon: '🎓', desc: 'Nå nivå 10', condition: (s) => s.level >= 10 },
-            { id: 'daily_goal', name: 'Dagsmästare', icon: '🏆', desc: 'Klara dagens mål', condition: (s) => s.dailyQuestions >= s.dailyGoal },
-            { id: 'boss_slayer', name: 'Bossdödare', icon: '⚔️', desc: 'Besegra en boss', condition: (s) => s.bossesDefeated.length >= 1 },
-            { id: 'all_bosses', name: 'Mästare', icon: '🌈', desc: 'Besegra alla bossar', condition: (s) => s.bossesDefeated.length >= bosses.length },
-            { id: 'theme_collector', name: 'Stilikon', icon: '🎨', desc: 'Lås upp 3 teman', condition: (s) => s.unlockedThemes.length >= 3 },
-            { id: 'speed_demon', name: 'Blixtsnabb', icon: '⚡', desc: 'Svara rätt på under 2 sekunder', condition: (s) => s.fastAnswer }
+            { id: 'first_correct', name: 'Baby W', icon: '⭐', desc: 'Första rätta svaret', condition: (s) => s.totalCorrect >= 1 },
+            { id: 'ten_correct', name: 'Lowkey Smart', icon: '🧠', desc: '10 rätt no cap', condition: (s) => s.totalCorrect >= 10 },
+            { id: 'fifty_correct', name: 'Highkey Slay', icon: '💅', desc: '50 rätt fr fr', condition: (s) => s.totalCorrect >= 50 },
+            { id: 'hundred_correct', name: 'Main Character', icon: '👑', desc: '100 rätt - du är THAT girl', condition: (s) => s.totalCorrect >= 100 },
+            { id: 'fivehundred_correct', name: 'Literally Goated', icon: '🐐', desc: '500 rätt - touch grass?', condition: (s) => s.totalCorrect >= 500 },
+            { id: 'streak_5', name: 'Ight Bet', icon: '🔥', desc: '5 i rad', condition: (s) => s.bestStreak >= 5 },
+            { id: 'streak_10', name: 'Ate That', icon: '🍽️', desc: '10 i rad - no crumbs', condition: (s) => s.bestStreak >= 10 },
+            { id: 'streak_20', name: 'Sigma Mode', icon: '🗿', desc: '20 i rad - built different', condition: (s) => s.bestStreak >= 20 },
+            { id: 'streak_50', name: 'Final Boss', icon: '💀', desc: '50 i rad - actual demon', condition: (s) => s.bestStreak >= 50 },
+            { id: 'level_5', name: 'Era Starts', icon: '📈', desc: 'Nivå 5 - glow up', condition: (s) => s.level >= 5 },
+            { id: 'level_10', name: 'Rent Free', icon: '🏠', desc: 'Nivå 10 - i mattens hjärna', condition: (s) => s.level >= 10 },
+            { id: 'daily_goal', name: 'Grindset', icon: '💪', desc: 'Dagens mål klarat', condition: (s) => s.dailyQuestions >= s.dailyGoal },
+            { id: 'boss_slayer', name: 'Boss Diff', icon: '⚔️', desc: 'Besegra en boss', condition: (s) => s.bossesDefeated.length >= 1 },
+            { id: 'all_bosses', name: 'GG EZ', icon: '🎮', desc: 'Alla bossar down', condition: (s) => s.bossesDefeated.length >= bosses.length },
+            { id: 'theme_collector', name: 'Drip Check', icon: '🎨', desc: '3 teman - aesthetic', condition: (s) => s.unlockedThemes.length >= 3 },
+            { id: 'speed_demon', name: 'Speedrun', icon: '⚡', desc: 'Under 2 sek - cracked', condition: (s) => s.fastAnswer },
+            { id: 'rich', name: 'Stonks', icon: '📊', desc: '10000 poäng totalt', condition: (s) => s.totalScore >= 10000 }
         ];
 
-        const levelTitles = ['Nybörjare', 'Elev', 'Student', 'Lärling', 'Kunnig', 'Skicklig', 'Avancerad', 'Expert', 'Mästare', 'Stormästare', 'Legend', 'Mästare', 'Superstjärna', 'Geni', 'Mattedrottning'];
+        const levelTitles = ['Noob', 'Lansen', 'Tryhard', 'Grinder', 'Slay', 'No Cap', 'Sigma', 'Based', 'Goated', 'Bussin', 'Legend', 'Rizz Lord', 'Main Character', 'Final Boss', 'Mattedrottning 👑'];
 
-        const encouragements = ["Du klarar detta! 💪", "Fortsätt så, stjärna! ⭐", "Du är fantastisk! 🌟", "Blivande mattechampion! 🏆", "Strålande jobb! 💎", "Du är på gång! 🔥", "Inget stoppar dig! 🚀", "Så stolt över dig! 💖"];
-        const correctMessages = ["Perfekt! ⭐", "Fantastiskt! 🌟", "Helt rätt! 💫", "Briljant! 💎", "Superstjärna! 🌈", "Underbart! 🎉", "Toppen! 💖", "Utmärkt! ✨"];
-        const incorrectMessages = ["Nästan! Försök igen! 💪", "Så nära! Fortsätt! 🌟", "Du tar nästa! ⭐", "Ge inte upp! 💖"];
+        const encouragements = [
+            "du fixar detta fr fr 💪",
+            "no cap du är cracked 🔥",
+            "slay bestie! ✨",
+            "main character energy 💅",
+            "you ate that up 🍽️",
+            "era definieras nu 🚀",
+            "built different fr 💀",
+            "W människa 👑"
+        ];
+        const correctMessages = [
+            "SLAY! 💅✨",
+            "no cap W 🔥",
+            "du är GOATED 🐐",
+            "ATE AND LEFT NO CRUMBS 🍽️",
+            "bussin fr fr 💀",
+            "sigma grindset 🗿",
+            "LETS GOOO 🚀",
+            "actual legend 👑",
+            "gg ez 🎮",
+            "big brain moment 🧠",
+            "CEO of matte 💼",
+            "rent free i din hjärna 🏠"
+        ];
+        const incorrectMessages = [
+            "L men du tar nästa 💪",
+            "nah vi går igen 🔄",
+            "plot twist: du fixar det 📖",
+            "character development arc 📈",
+            "inte idag men imorgon 🌅",
+            "vibe check failed men vi kör 💀"
+        ];
 
         // ==================== GAME LOGIC ====================
         let currentQuestion = { num1: 0, num2: 0, answer: 0 };
