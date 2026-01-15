@@ -23,7 +23,6 @@
             --text-light: #666;
         }
 
-        /* Theme: Space */
         .theme-space {
             --primary: #1a1a2e;
             --secondary: #16213e;
@@ -34,7 +33,6 @@
             --card-bg: rgba(255,255,255,0.95);
         }
 
-        /* Theme: Ocean */
         .theme-ocean {
             --primary: #0077b6;
             --secondary: #00b4d8;
@@ -45,7 +43,6 @@
             --card-bg: rgba(255,255,255,0.95);
         }
 
-        /* Theme: Forest */
         .theme-forest {
             --primary: #2d6a4f;
             --secondary: #40916c;
@@ -56,7 +53,6 @@
             --card-bg: rgba(255,255,255,0.95);
         }
 
-        /* Theme: Unicorn */
         .theme-unicorn {
             --primary: #ff6b9d;
             --secondary: #c44569;
@@ -504,11 +500,6 @@
         .theme-forest { background: linear-gradient(135deg, #1b4332, #52b788); }
         .theme-unicorn { background: linear-gradient(135deg, #ff6b9d, #ffc8dd); }
 
-        .boss-container {
-            text-align: center;
-            padding: 20px;
-        }
-
         .boss-emoji {
             font-size: 4em;
             animation: bossFloat 1s ease-in-out infinite;
@@ -605,6 +596,177 @@
             color: var(--text-light);
         }
 
+        /* Login & Profile Styles */
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .avatar-option {
+            font-size: 2.5em;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0f0f0;
+            border: 3px solid transparent;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.1);
+            background: #e0e0e0;
+        }
+
+        .avatar-option.selected {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            transform: scale(1.15);
+        }
+
+        .name-input {
+            font-size: 1.3em;
+            padding: 12px 20px;
+            border: 3px solid var(--secondary);
+            border-radius: 15px;
+            text-align: center;
+            outline: none;
+            width: 80%;
+            max-width: 250px;
+            margin: 10px 0;
+        }
+
+        .name-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .profile-avatar {
+            font-size: 3em;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-info {
+            text-align: left;
+        }
+
+        .profile-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .profile-level {
+            color: var(--text-light);
+        }
+
+        /* Leaderboard Styles */
+        .leaderboard {
+            margin: 15px 0;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .leaderboard-entry:nth-child(1) {
+            background: linear-gradient(135deg, #ffd700 0%, #ffec8b 100%);
+        }
+
+        .leaderboard-entry:nth-child(2) {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+        }
+
+        .leaderboard-entry:nth-child(3) {
+            background: linear-gradient(135deg, #cd7f32 0%, #daa06d 100%);
+        }
+
+        .leaderboard-entry.current-user {
+            border: 3px solid var(--secondary);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.2em;
+            font-weight: bold;
+            width: 35px;
+            color: var(--text);
+        }
+
+        .leaderboard-avatar {
+            font-size: 1.8em;
+            margin-right: 10px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-weight: bold;
+            color: var(--text);
+            text-align: left;
+        }
+
+        .leaderboard-score {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .leaderboard-level {
+            font-size: 0.8em;
+            color: var(--text-light);
+            margin-left: 10px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            padding: 8px 20px;
+            border: none;
+            background: #eee;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .switch-profile-btn {
+            font-size: 0.8em;
+            padding: 5px 15px;
+            margin-top: 5px;
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 15px;
@@ -617,16 +779,47 @@
             .badge { width: 40px; height: 40px; font-size: 1.2em; }
             .heatmap { font-size: 0.6em; }
             .start-btn, .mode-btn-large { padding: 12px 30px; font-size: 1.1em; }
+            .avatar-grid { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+            .avatar-option { font-size: 2em; padding: 8px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Start Screen -->
-        <div class="screen active" id="startScreen">
+        <!-- Login Screen -->
+        <div class="screen active" id="loginScreen">
             <div class="mascot">🌟</div>
             <h1 class="title">Math Stars</h1>
             <p class="subtitle">Multiplikationsäventyr!</p>
+
+            <div id="loginForm">
+                <h3 style="color: var(--secondary); margin: 20px 0 10px;">Vad heter du?</h3>
+                <input type="text" class="name-input" id="nameInput" placeholder="Ditt namn..." maxlength="15">
+
+                <h3 style="color: var(--secondary); margin: 20px 0 10px;">Välj din figur!</h3>
+                <div class="avatar-grid" id="avatarGrid"></div>
+
+                <button class="start-btn" onclick="createProfile()" id="createProfileBtn" disabled>
+                    🚀 Börja spela!
+                </button>
+            </div>
+
+            <div id="existingProfiles" style="display: none; margin-top: 30px;">
+                <h3 style="color: var(--text-light); margin-bottom: 15px;">Eller välj en befintlig profil:</h3>
+                <div id="profileList"></div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="screen" id="startScreen">
+            <div class="profile-header">
+                <div class="profile-avatar" id="currentAvatar">🦊</div>
+                <div class="profile-info">
+                    <div class="profile-name" id="currentName">Spelare</div>
+                    <div class="profile-level" id="currentLevel">Nivå 1</div>
+                    <button class="nav-btn switch-profile-btn" onclick="showScreen('loginScreen'); loadExistingProfiles();">Byt profil</button>
+                </div>
+            </div>
 
             <div class="daily-goal">
                 <div style="color: #666; font-size: 0.9em;">Dagens framsteg</div>
@@ -645,8 +838,28 @@
             <button class="start-btn" onclick="startGame('practice')">▶️ Öva</button>
             <button class="mode-btn-large boss-btn" onclick="showBossSelect()">🐉 Bossutmaning</button>
 
-            <button class="nav-btn" onclick="showScreen('statsScreen')">📊 Statistik</button>
-            <button class="nav-btn" onclick="showScreen('settingsScreen')">⚙️ Inställningar</button>
+            <div style="margin-top: 15px;">
+                <button class="nav-btn" onclick="showScreen('leaderboardScreen')">🏆 Topplista</button>
+                <button class="nav-btn" onclick="showScreen('statsScreen')">📊 Statistik</button>
+                <button class="nav-btn" onclick="showScreen('settingsScreen')">⚙️ Inställningar</button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div class="screen" id="leaderboardScreen">
+            <h2 class="title">🏆 Topplista</h2>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showLeaderboardTab('score')">Poäng</button>
+                <button class="tab-btn" onclick="showLeaderboardTab('level')">Nivå</button>
+                <button class="tab-btn" onclick="showLeaderboardTab('streak')">Svit</button>
+            </div>
+
+            <div class="leaderboard" id="leaderboard">
+                <p style="color: #888;">Laddar topplista...</p>
+            </div>
+
+            <button class="nav-btn" onclick="showScreen('startScreen')">🏠 Tillbaka</button>
         </div>
 
         <!-- Settings Screen -->
@@ -793,7 +1006,312 @@
 
     <div class="celebration" id="celebration"></div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
+        // ==================== FIREBASE CONFIG ====================
+        // IMPORTANT: Replace this with your own Firebase config!
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        let firebaseEnabled = false;
+        let database = null;
+
+        // Initialize Firebase (only if configured)
+        function initFirebase() {
+            if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                try {
+                    firebase.initializeApp(firebaseConfig);
+                    database = firebase.database();
+                    firebaseEnabled = true;
+                    console.log("Firebase connected!");
+                } catch (e) {
+                    console.log("Firebase not configured, using local storage only");
+                }
+            }
+        }
+
+        // ==================== AVATARS ====================
+        const avatars = ['🦊', '🐱', '🐶', '🐰', '🐼', '🦁', '🐸', '🦋', '🌸', '⭐', '🌈', '🦄', '🐬', '🦩', '🐝'];
+
+        let selectedAvatar = null;
+        let currentProfile = null;
+
+        // ==================== PROFILE SYSTEM ====================
+        function renderAvatarGrid() {
+            const grid = document.getElementById('avatarGrid');
+            grid.innerHTML = '';
+
+            avatars.forEach(avatar => {
+                const div = document.createElement('div');
+                div.className = 'avatar-option';
+                div.textContent = avatar;
+                div.onclick = () => selectAvatar(avatar, div);
+                grid.appendChild(div);
+            });
+        }
+
+        function selectAvatar(avatar, element) {
+            document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedAvatar = avatar;
+            checkCanCreate();
+        }
+
+        function checkCanCreate() {
+            const name = document.getElementById('nameInput').value.trim();
+            const btn = document.getElementById('createProfileBtn');
+            btn.disabled = !(name.length >= 2 && selectedAvatar);
+        }
+
+        function createProfile() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (!name || !selectedAvatar) return;
+
+            const profileId = 'profile_' + Date.now();
+            const profile = {
+                id: profileId,
+                name: name,
+                avatar: selectedAvatar,
+                createdAt: Date.now()
+            };
+
+            // Save profile list
+            let profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+            profiles.push(profile);
+            localStorage.setItem('mathStarsProfiles', JSON.stringify(profiles));
+
+            // Set as current profile
+            localStorage.setItem('mathStarsCurrentProfile', profileId);
+
+            // Initialize game state for this profile
+            currentProfile = profile;
+            initializeGameStateForProfile(profileId);
+
+            // Go to main screen
+            updateProfileDisplay();
+            showScreen('startScreen');
+        }
+
+        function initializeGameStateForProfile(profileId) {
+            const existingState = localStorage.getItem(`mathStars_${profileId}_state`);
+            if (!existingState) {
+                // New profile - initialize fresh state
+                gameState = {
+                    score: 0,
+                    correct: 0,
+                    total: 0,
+                    streak: 0,
+                    bestStreak: 0,
+                    level: 1,
+                    xp: 0,
+                    xpToNext: 100,
+                    totalScore: 0,
+                    selectedTables: [2, 3, 4, 5],
+                    mode: 'practice',
+                    dailyQuestions: 0,
+                    dailyGoal: 20,
+                    lastPlayDate: null,
+                    totalCorrect: 0,
+                    achievements: {},
+                    masteredTables: [],
+                    currentTheme: 'default',
+                    unlockedThemes: ['default'],
+                    soundEnabled: true,
+                    bossesDefeated: [],
+                    dailyChallengeCompleted: false
+                };
+                factStats = {};
+                saveGameState();
+            } else {
+                loadGameState();
+            }
+        }
+
+        function loadExistingProfiles() {
+            const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+            const container = document.getElementById('existingProfiles');
+            const list = document.getElementById('profileList');
+
+            if (profiles.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            list.innerHTML = '';
+
+            profiles.forEach(profile => {
+                const div = document.createElement('div');
+                div.className = 'leaderboard-entry';
+                div.style.cursor = 'pointer';
+                div.innerHTML = `
+                    <span class="leaderboard-avatar">${profile.avatar}</span>
+                    <span class="leaderboard-name">${profile.name}</span>
+                `;
+                div.onclick = () => selectExistingProfile(profile);
+                list.appendChild(div);
+            });
+        }
+
+        function selectExistingProfile(profile) {
+            currentProfile = profile;
+            localStorage.setItem('mathStarsCurrentProfile', profile.id);
+            initializeGameStateForProfile(profile.id);
+            updateProfileDisplay();
+            showScreen('startScreen');
+        }
+
+        function updateProfileDisplay() {
+            if (!currentProfile) return;
+
+            document.getElementById('currentAvatar').textContent = currentProfile.avatar;
+            document.getElementById('currentName').textContent = currentProfile.name;
+            document.getElementById('currentLevel').textContent = `Nivå ${gameState.level}`;
+        }
+
+        function loadCurrentProfile() {
+            const currentProfileId = localStorage.getItem('mathStarsCurrentProfile');
+            const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+
+            if (currentProfileId) {
+                currentProfile = profiles.find(p => p.id === currentProfileId);
+                if (currentProfile) {
+                    initializeGameStateForProfile(currentProfileId);
+                    updateProfileDisplay();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // ==================== LEADERBOARD ====================
+        let currentLeaderboardTab = 'score';
+
+        function showLeaderboardTab(tab) {
+            currentLeaderboardTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            loadLeaderboard();
+        }
+
+        function loadLeaderboard() {
+            const container = document.getElementById('leaderboard');
+
+            if (firebaseEnabled) {
+                loadLeaderboardFromFirebase();
+            } else {
+                loadLeaderboardFromLocal();
+            }
+        }
+
+        function loadLeaderboardFromLocal() {
+            const container = document.getElementById('leaderboard');
+            const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+
+            // Get stats for each profile
+            const leaderboardData = profiles.map(profile => {
+                const stateKey = `mathStars_${profile.id}_state`;
+                const state = JSON.parse(localStorage.getItem(stateKey) || '{}');
+                return {
+                    ...profile,
+                    totalScore: state.totalScore || 0,
+                    level: state.level || 1,
+                    bestStreak: state.bestStreak || 0
+                };
+            });
+
+            // Sort based on current tab
+            if (currentLeaderboardTab === 'score') {
+                leaderboardData.sort((a, b) => b.totalScore - a.totalScore);
+            } else if (currentLeaderboardTab === 'level') {
+                leaderboardData.sort((a, b) => b.level - a.level);
+            } else {
+                leaderboardData.sort((a, b) => b.bestStreak - a.bestStreak);
+            }
+
+            renderLeaderboard(leaderboardData);
+        }
+
+        function loadLeaderboardFromFirebase() {
+            const container = document.getElementById('leaderboard');
+            container.innerHTML = '<p style="color: #888;">Laddar topplista...</p>';
+
+            const sortField = currentLeaderboardTab === 'score' ? 'totalScore' :
+                              currentLeaderboardTab === 'level' ? 'level' : 'bestStreak';
+
+            database.ref('leaderboard').orderByChild(sortField).limitToLast(20).once('value')
+                .then(snapshot => {
+                    const data = [];
+                    snapshot.forEach(child => {
+                        data.push(child.val());
+                    });
+                    data.reverse(); // Highest first
+                    renderLeaderboard(data);
+                })
+                .catch(err => {
+                    console.error('Leaderboard error:', err);
+                    loadLeaderboardFromLocal();
+                });
+        }
+
+        function renderLeaderboard(data) {
+            const container = document.getElementById('leaderboard');
+
+            if (data.length === 0) {
+                container.innerHTML = '<p style="color: #888;">Inga spelare ännu. Var först!</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            data.forEach((player, index) => {
+                const isCurrentUser = currentProfile && player.id === currentProfile.id;
+                const div = document.createElement('div');
+                div.className = `leaderboard-entry ${isCurrentUser ? 'current-user' : ''}`;
+
+                const value = currentLeaderboardTab === 'score' ? player.totalScore :
+                              currentLeaderboardTab === 'level' ? player.level : player.bestStreak;
+
+                const label = currentLeaderboardTab === 'score' ? 'p' :
+                              currentLeaderboardTab === 'level' ? '' : '🔥';
+
+                div.innerHTML = `
+                    <span class="leaderboard-rank">${index + 1}.</span>
+                    <span class="leaderboard-avatar">${player.avatar}</span>
+                    <span class="leaderboard-name">${player.name}</span>
+                    <span class="leaderboard-score">${value}${label}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateLeaderboard() {
+            if (!firebaseEnabled || !currentProfile) return;
+
+            const leaderboardEntry = {
+                id: currentProfile.id,
+                name: currentProfile.name,
+                avatar: currentProfile.avatar,
+                totalScore: gameState.totalScore,
+                level: gameState.level,
+                bestStreak: gameState.bestStreak,
+                updatedAt: Date.now()
+            };
+
+            database.ref('leaderboard/' + currentProfile.id).set(leaderboardEntry)
+                .catch(err => console.error('Update leaderboard error:', err));
+        }
+
         // ==================== GAME STATE ====================
         let gameState = {
             score: 0,
@@ -817,14 +1335,11 @@
             unlockedThemes: ['default'],
             soundEnabled: true,
             bossesDefeated: [],
-            dailyChallengeCompleted: false,
-            dailyChallengeType: null
+            dailyChallengeCompleted: false
         };
 
-        // Detailed stats for each multiplication fact
         let factStats = {};
 
-        // Initialize fact stats for all 1-10 × 1-10
         function initFactStats() {
             for (let i = 1; i <= 10; i++) {
                 for (let j = 1; j <= 10; j++) {
@@ -846,22 +1361,16 @@
         // ==================== SMART ALGORITHM ====================
         function getFactScore(key) {
             const stat = factStats[key];
-            if (!stat || stat.attempts === 0) return 0.5; // Unknown facts get medium priority
+            if (!stat || stat.attempts === 0) return 0.5;
 
             const accuracy = stat.correct / stat.attempts;
             const avgTime = stat.totalTime / stat.attempts;
-
-            // Time factor: slower = needs more practice (normalize around 3 seconds)
             const timeFactor = Math.min(avgTime / 3000, 2);
-
-            // Recency factor: older = needs more practice
             const daysSincePractice = stat.lastPracticed
                 ? (Date.now() - stat.lastPracticed) / (1000 * 60 * 60 * 24)
                 : 7;
             const recencyFactor = Math.min(daysSincePractice / 7, 1);
 
-            // Lower score = needs more practice
-            // We want: low accuracy, high time, old practice = low score = high priority
             return accuracy * 0.5 - timeFactor * 0.25 - recencyFactor * 0.25;
         }
 
@@ -880,17 +1389,12 @@
                 }
             }
 
-            // Sort by score (lowest = needs most practice)
             candidates.sort((a, b) => a.score - b.score);
-
-            // Pick from bottom 30% with some randomness for variety
             const poolSize = Math.max(3, Math.floor(candidates.length * 0.3));
             const pool = candidates.slice(0, poolSize);
 
-            // Add a 20% chance to pick a random fact for variety
             if (Math.random() < 0.2) {
-                const randomIdx = Math.floor(Math.random() * candidates.length);
-                return candidates[randomIdx];
+                return candidates[Math.floor(Math.random() * candidates.length)];
             }
 
             return pool[Math.floor(Math.random() * pool.length)];
@@ -898,77 +1402,38 @@
 
         // ==================== TIPS SYSTEM ====================
         const multiplicationTips = {
-            '1': {
-                general: "Allt gånger 1 är sig självt! 🎯",
-                examples: ["7 × 1 = 7", "1 × 9 = 9"]
-            },
-            '2': {
-                general: "Dubbla talet! Lägg ihop talet med sig självt. ✌️",
-                examples: ["2 × 6 = 6 + 6 = 12", "2 × 8 = 8 + 8 = 16"]
-            },
-            '3': {
-                general: "Dubbla och lägg till en gång till! 🔢",
-                examples: ["3 × 4 = (2 × 4) + 4 = 8 + 4 = 12", "3 × 7 = (2 × 7) + 7 = 14 + 7 = 21"]
-            },
-            '4': {
-                general: "Dubbla två gånger! Först × 2, sen × 2 igen. 🎲",
-                examples: ["4 × 6 = 2 × 6 × 2 = 12 × 2 = 24", "4 × 7 = 2 × 7 × 2 = 14 × 2 = 28"]
-            },
-            '5': {
-                general: "Hälften av 10-gångern! Eller: slutar alltid på 0 eller 5. ✋",
-                examples: ["5 × 6 = (10 × 6) ÷ 2 = 60 ÷ 2 = 30", "5 × 7 = 35 (udda tal → slutar på 5)"]
-            },
-            '6': {
-                general: "3-gångern dubblad! Eller 5-gångern + en gång till. 🎯",
-                examples: ["6 × 4 = (3 × 4) × 2 = 12 × 2 = 24", "6 × 7 = (5 × 7) + 7 = 35 + 7 = 42"]
-            },
-            '7': {
-                general: "Knepig! Prova 5-gångern + 2-gångern. 🌟",
-                examples: ["7 × 6 = (5 × 6) + (2 × 6) = 30 + 12 = 42", "7 × 8 = (5 × 8) + (2 × 8) = 40 + 16 = 56"]
-            },
-            '8': {
-                general: "Dubbla tre gånger! 2 × 2 × 2 = 8. 🚀",
-                examples: ["8 × 6 = 2×2×2×6 = 2×2×12 = 2×24 = 48", "8 × 7 = (4 × 7) × 2 = 28 × 2 = 56"]
-            },
-            '9': {
-                general: "Fingertricket! 🖐️ Eller: (10 × talet) - talet",
-                examples: ["9 × 7 = (10 × 7) - 7 = 70 - 7 = 63", "9 × 6: Böj finger 6, se 5 och 4 = 54"],
-                special: "Fingertrick för 9:ans tabell: Håll upp 10 fingrar. För 9×N, böj ner finger nummer N. Fingrarna till vänster = tiotal, till höger = ental!"
-            },
-            '10': {
-                general: "Lägg till en nolla! Superenkelt! 🔟",
-                examples: ["10 × 7 = 70", "10 × 4 = 40"]
-            }
+            '1': { general: "Allt gånger 1 är sig självt! 🎯", examples: ["7 × 1 = 7", "1 × 9 = 9"] },
+            '2': { general: "Dubbla talet! Lägg ihop talet med sig självt. ✌️", examples: ["2 × 6 = 6 + 6 = 12", "2 × 8 = 8 + 8 = 16"] },
+            '3': { general: "Dubbla och lägg till en gång till! 🔢", examples: ["3 × 4 = (2 × 4) + 4 = 8 + 4 = 12"] },
+            '4': { general: "Dubbla två gånger! Först × 2, sen × 2 igen. 🎲", examples: ["4 × 6 = 2 × 6 × 2 = 12 × 2 = 24"] },
+            '5': { general: "Hälften av 10-gångern! Eller: slutar alltid på 0 eller 5. ✋", examples: ["5 × 6 = (10 × 6) ÷ 2 = 30"] },
+            '6': { general: "3-gångern dubblad! Eller 5-gångern + en gång till. 🎯", examples: ["6 × 4 = (3 × 4) × 2 = 24"] },
+            '7': { general: "Knepig! Prova 5-gångern + 2-gångern. 🌟", examples: ["7 × 6 = (5 × 6) + (2 × 6) = 42"] },
+            '8': { general: "Dubbla tre gånger! 2 × 2 × 2 = 8. 🚀", examples: ["8 × 6 = 2×2×2×6 = 48"] },
+            '9': { general: "Fingertricket! 🖐️ Eller: (10 × talet) - talet", examples: ["9 × 7 = (10 × 7) - 7 = 63"], special: "Fingertrick: Håll upp 10 fingrar. För 9×N, böj finger N. Vänster = tiotal, höger = ental!" },
+            '10': { general: "Lägg till en nolla! Superenkelt! 🔟", examples: ["10 × 7 = 70"] }
         };
 
         function getTipForQuestion(num1, num2) {
-            // Get tip for the harder number (usually the larger one)
             const tipNum = Math.max(num1, num2).toString();
             const tip = multiplicationTips[tipNum];
-
             if (!tip) return null;
 
             let content = `<strong>${tip.general}</strong><br><br>`;
             content += `Exempel: ${tip.examples.join('<br>')}`;
-
-            if (tip.special) {
-                content += `<br><br>🌟 ${tip.special}`;
-            }
-
-            // Add specific tip for this exact problem
-            const answer = num1 * num2;
-            content += `<br><br>Så: <strong>${num1} × ${num2} = ${answer}</strong>`;
+            if (tip.special) content += `<br><br>🌟 ${tip.special}`;
+            content += `<br><br>Så: <strong>${num1} × ${num2} = ${num1 * num2}</strong>`;
 
             return content;
         }
 
         // ==================== THEMES ====================
         const themes = {
-            default: { name: 'Standard', cost: 0, emoji: '🌟' },
-            space: { name: 'Rymd', cost: 500, emoji: '🚀' },
-            ocean: { name: 'Hav', cost: 500, emoji: '🌊' },
-            forest: { name: 'Skog', cost: 500, emoji: '🌲' },
-            unicorn: { name: 'Enhörning', cost: 1000, emoji: '🦄' }
+            default: { name: 'Standard', cost: 0 },
+            space: { name: 'Rymd', cost: 500 },
+            ocean: { name: 'Hav', cost: 500 },
+            forest: { name: 'Skog', cost: 500 },
+            unicorn: { name: 'Enhörning', cost: 1000 }
         };
 
         function applyTheme(themeName) {
@@ -1023,7 +1488,7 @@
         let currentBoss = null;
         let bossHealth = 0;
         let bossStartTime = 0;
-        let bossTimerInterval = null;
+        let timerInterval = null;
 
         function isBossUnlocked(boss) {
             if (boss.unlocked) return true;
@@ -1044,13 +1509,9 @@
                 const card = document.createElement('div');
                 card.style.cssText = `
                     background: ${unlocked ? 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' : '#ddd'};
-                    border-radius: 15px;
-                    padding: 15px;
-                    margin: 10px 0;
-                    opacity: ${unlocked ? 1 : 0.5};
-                    cursor: ${unlocked ? 'pointer' : 'not-allowed'};
+                    border-radius: 15px; padding: 15px; margin: 10px 0;
+                    opacity: ${unlocked ? 1 : 0.5}; cursor: ${unlocked ? 'pointer' : 'not-allowed'};
                 `;
-
                 card.innerHTML = `
                     <div style="font-size: 2em;">${boss.emoji}</div>
                     <div style="font-weight: bold; color: #764ba2;">${boss.name}</div>
@@ -1059,11 +1520,7 @@
                     </div>
                     ${defeated ? '<div style="color: #00b894; font-size: 0.9em;">✓ Besegrad!</div>' : ''}
                 `;
-
-                if (unlocked) {
-                    card.onclick = () => startBossBattle(boss);
-                }
-
+                if (unlocked) card.onclick = () => startBossBattle(boss);
                 container.appendChild(card);
             });
 
@@ -1092,49 +1549,41 @@
             document.getElementById('bossHealth').style.width = percent + '%';
 
             if (bossHealth <= 0) {
-                // Victory!
                 if (!gameState.bossesDefeated.includes(currentBoss.id)) {
                     gameState.bossesDefeated.push(currentBoss.id);
                 }
-
                 const timeElapsed = Math.floor((Date.now() - bossStartTime) / 1000);
                 document.getElementById('victoryText').textContent = `Du besegrade ${currentBoss.name}!`;
                 document.getElementById('victoryScore').textContent = gameState.score;
                 document.getElementById('victoryTime').textContent = timeElapsed + 's';
-
                 createConfetti();
                 playSound('victory');
                 saveGameState();
-
                 showScreen('victoryScreen');
             }
         }
 
         // ==================== DAILY CHALLENGES ====================
         const dailyChallenges = [
-            { type: 'streak', target: 10, text: 'Få en svit på 10!', check: () => gameState.streak >= 10 },
-            { type: 'questions', target: 30, text: 'Svara på 30 frågor!', check: () => gameState.dailyQuestions >= 30 },
-            { type: 'table', target: 5, text: 'Öva 5:ans tabell 15 gånger!', table: 5, check: () => getDailyTableCount(5) >= 15 },
-            { type: 'accuracy', target: 90, text: 'Få 90% rätt på 20 frågor!', check: () => gameState.total >= 20 && (gameState.correct / gameState.total) >= 0.9 },
+            { type: 'streak', text: 'Få en svit på 10!', check: () => gameState.streak >= 10 },
+            { type: 'questions', text: 'Svara på 30 frågor!', check: () => gameState.dailyQuestions >= 30 },
+            { type: 'table', text: 'Öva 5:ans tabell 15 gånger!', table: 5, check: () => getDailyTableCount(5) >= 15 },
+            { type: 'accuracy', text: 'Få 90% rätt på 20 frågor!', check: () => gameState.total >= 20 && (gameState.correct / gameState.total) >= 0.9 },
             { type: 'boss', text: 'Besegra en boss!', check: () => currentBoss && bossHealth <= 0 }
         ];
 
         let dailyTableCount = {};
 
-        function getDailyTableCount(table) {
-            return dailyTableCount[table] || 0;
-        }
+        function getDailyTableCount(table) { return dailyTableCount[table] || 0; }
 
         function getTodaysChallenge() {
-            const today = new Date().toDateString();
-            const seed = today.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+            const seed = new Date().toDateString().split('').reduce((a, b) => a + b.charCodeAt(0), 0);
             return dailyChallenges[seed % dailyChallenges.length];
         }
 
         function updateDailyChallengeCard() {
             const challenge = getTodaysChallenge();
             document.getElementById('dailyChallengeText').textContent = challenge.text;
-
             if (gameState.dailyChallengeCompleted) {
                 document.getElementById('dailyChallengeCard').style.opacity = '0.5';
                 document.getElementById('dailyChallengeText').textContent += ' ✓ Klar!';
@@ -1143,15 +1592,12 @@
 
         function startDailyChallenge() {
             const challenge = getTodaysChallenge();
-            if (challenge.table) {
-                gameState.selectedTables = [challenge.table];
-            }
+            if (challenge.table) gameState.selectedTables = [challenge.table];
             startGame('challenge');
         }
 
         function checkDailyChallenge() {
             if (gameState.dailyChallengeCompleted) return;
-
             const challenge = getTodaysChallenge();
             if (challenge.check()) {
                 gameState.dailyChallengeCompleted = true;
@@ -1175,9 +1621,9 @@
 
             switch(type) {
                 case 'correct':
-                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-                    oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
                     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                     oscillator.start(audioContext.currentTime);
@@ -1244,54 +1690,27 @@
             { id: 'speed_demon', name: 'Blixtsnabb', icon: '⚡', desc: 'Svara rätt på under 2 sekunder', condition: (s) => s.fastAnswer }
         ];
 
-        const levelTitles = [
-            'Nybörjare', 'Elev', 'Student', 'Lärling', 'Kunnig',
-            'Skicklig', 'Avancerad', 'Expert', 'Mästare', 'Stormästare',
-            'Legend', 'Mästare', 'Superstjärna', 'Geni', 'Mattedrottning'
-        ];
+        const levelTitles = ['Nybörjare', 'Elev', 'Student', 'Lärling', 'Kunnig', 'Skicklig', 'Avancerad', 'Expert', 'Mästare', 'Stormästare', 'Legend', 'Mästare', 'Superstjärna', 'Geni', 'Mattedrottning'];
 
-        // ==================== UI MESSAGES ====================
-        const encouragements = [
-            "Du klarar detta! 💪",
-            "Fortsätt så, stjärna! ⭐",
-            "Du är fantastisk! 🌟",
-            "Blivande mattechampion! 🏆",
-            "Strålande jobb! 💎",
-            "Du är på gång! 🔥",
-            "Inget stoppar dig! 🚀",
-            "Så stolt över dig! 💖",
-            "Du är naturtalang! 🌈",
-            "Otroligt fokus! 🎯"
-        ];
-
-        const correctMessages = [
-            "Perfekt! ⭐", "Fantastiskt! 🌟", "Helt rätt! 💫", "Briljant! 💎",
-            "Superstjärna! 🌈", "Underbart! 🎉", "Toppen! 💖", "Utmärkt! ✨"
-        ];
-
-        const incorrectMessages = [
-            "Nästan! Försök igen! 💪",
-            "Så nära! Fortsätt! 🌟",
-            "Du tar nästa! ⭐",
-            "Ge inte upp! 💖"
-        ];
+        const encouragements = ["Du klarar detta! 💪", "Fortsätt så, stjärna! ⭐", "Du är fantastisk! 🌟", "Blivande mattechampion! 🏆", "Strålande jobb! 💎", "Du är på gång! 🔥", "Inget stoppar dig! 🚀", "Så stolt över dig! 💖"];
+        const correctMessages = ["Perfekt! ⭐", "Fantastiskt! 🌟", "Helt rätt! 💫", "Briljant! 💎", "Superstjärna! 🌈", "Underbart! 🎉", "Toppen! 💖", "Utmärkt! ✨"];
+        const incorrectMessages = ["Nästan! Försök igen! 💪", "Så nära! Fortsätt! 🌟", "Du tar nästa! ⭐", "Ge inte upp! 💖"];
 
         // ==================== GAME LOGIC ====================
         let currentQuestion = { num1: 0, num2: 0, answer: 0 };
         let questionStartTime = 0;
-        let timerInterval = null;
 
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
 
-            if (screenId === 'statsScreen') {
-                updateStatsScreen();
-            }
+            if (screenId === 'statsScreen') updateStatsScreen();
             if (screenId === 'startScreen') {
                 updateDailyProgress();
                 updateDailyChallengeCard();
+                updateProfileDisplay();
             }
+            if (screenId === 'leaderboardScreen') loadLeaderboard();
         }
 
         function startGame(mode) {
@@ -1312,10 +1731,7 @@
             generateQuestion();
             document.getElementById('answerInput').focus();
 
-            // Resume audio context (needed for mobile)
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
+            if (audioContext.state === 'suspended') audioContext.resume();
         }
 
         function endGame() {
@@ -1344,15 +1760,10 @@
 
             questionStartTime = Date.now();
 
-            // Timer for boss mode
-            if (gameState.mode === 'boss') {
-                startQuestionTimer();
-            }
+            if (gameState.mode === 'boss') startQuestionTimer();
 
-            // Random encouragement
             if (Math.random() < 0.3) {
-                document.getElementById('encouragement').textContent =
-                    encouragements[Math.floor(Math.random() * encouragements.length)];
+                document.getElementById('encouragement').textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
             }
         }
 
@@ -1368,7 +1779,6 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    // Time's up - count as wrong
                     handleWrongAnswer(true);
                 }
             }, 100);
@@ -1385,10 +1795,8 @@
             }
 
             const responseTime = Date.now() - questionStartTime;
-
             if (timerInterval) clearInterval(timerInterval);
 
-            // Update fact stats
             if (!factStats[currentQuestion.key]) {
                 factStats[currentQuestion.key] = { correct: 0, wrong: 0, totalTime: 0, attempts: 0, lastPracticed: null, streak: 0 };
             }
@@ -1397,7 +1805,6 @@
             factStats[currentQuestion.key].totalTime += responseTime;
             factStats[currentQuestion.key].lastPracticed = Date.now();
 
-            // Track daily table practice
             if (!dailyTableCount[currentQuestion.num1]) dailyTableCount[currentQuestion.num1] = 0;
             dailyTableCount[currentQuestion.num1]++;
 
@@ -1414,6 +1821,7 @@
             checkAchievements();
             checkDailyChallenge();
             saveGameState();
+            updateLeaderboard();
         }
 
         function handleCorrectAnswer(responseTime) {
@@ -1425,48 +1833,31 @@
             factStats[currentQuestion.key].correct++;
             factStats[currentQuestion.key].streak++;
 
-            // Fast answer achievement
-            if (responseTime < 2000) {
-                gameState.fastAnswer = true;
-            }
+            if (responseTime < 2000) gameState.fastAnswer = true;
 
-            // Calculate score
             let points = 10;
             if (gameState.streak > 1) points += gameState.streak * 2;
             if (gameState.mode === 'boss') points *= 2;
-            if (responseTime < 3000) points += 5; // Speed bonus
+            if (responseTime < 3000) points += 5;
 
             gameState.score += points;
             gameState.totalScore += points;
 
-            // XP and leveling
             gameState.xp += points;
-            while (gameState.xp >= gameState.xpToNext) {
-                levelUp();
-            }
+            while (gameState.xp >= gameState.xpToNext) levelUp();
 
-            // Update best streak
-            if (gameState.streak > gameState.bestStreak) {
-                gameState.bestStreak = gameState.streak;
-            }
+            if (gameState.streak > gameState.bestStreak) gameState.bestStreak = gameState.streak;
 
-            // Boss damage
             if (gameState.mode === 'boss') {
                 bossHealth--;
                 updateBossHealth();
             }
 
-            // Unlock themes
-            checkThemeUnlocks();
-
             feedback.textContent = correctMessages[Math.floor(Math.random() * correctMessages.length)];
             feedback.className = 'feedback correct';
             playSound('correct');
 
-            // Celebration for streaks
-            if (gameState.streak % 5 === 0) {
-                createConfetti();
-            }
+            if (gameState.streak % 5 === 0) createConfetti();
 
             setTimeout(generateQuestion, 700);
         }
@@ -1487,7 +1878,6 @@
             feedback.className = 'feedback incorrect';
             playSound('wrong');
 
-            // Show tip
             const tip = getTipForQuestion(currentQuestion.num1, currentQuestion.num2);
             if (tip) {
                 document.getElementById('tipContent').innerHTML = tip;
@@ -1505,27 +1895,15 @@
             playSound('levelup');
         }
 
-        function checkThemeUnlocks() {
-            for (const [key, theme] of Object.entries(themes)) {
-                if (!gameState.unlockedThemes.includes(key) && gameState.totalScore >= theme.cost * 2) {
-                    // Auto-unlock at double the cost as a reward
-                }
-            }
-        }
-
         function updateDisplay() {
             document.getElementById('score').textContent = gameState.score;
             document.getElementById('correct').textContent = gameState.correct;
             document.getElementById('total').textContent = gameState.total;
             document.getElementById('streak').textContent = gameState.streak;
-
             document.getElementById('streakFire').style.display = gameState.streak > 0 ? 'inline' : 'none';
-
             document.getElementById('levelText').textContent = `Nivå ${gameState.level}`;
             document.getElementById('levelTitle').textContent = levelTitles[Math.min(gameState.level - 1, levelTitles.length - 1)];
-
-            const xpPercent = (gameState.xp / gameState.xpToNext) * 100;
-            document.getElementById('xpBar').style.width = `${xpPercent}%`;
+            document.getElementById('xpBar').style.width = `${(gameState.xp / gameState.xpToNext) * 100}%`;
         }
 
         function updateDailyProgress() {
@@ -1546,7 +1924,6 @@
             const container = document.getElementById('heatmap');
             container.innerHTML = '';
 
-            // Header row
             const corner = document.createElement('div');
             corner.className = 'heatmap-cell';
             corner.textContent = '×';
@@ -1559,7 +1936,6 @@
                 container.appendChild(header);
             }
 
-            // Data rows
             for (let i = 1; i <= 10; i++) {
                 const rowHeader = document.createElement('div');
                 rowHeader.className = 'heatmap-cell heatmap-header';
@@ -1572,7 +1948,6 @@
                     const stat = factStats[key];
 
                     let className = 'heatmap-cell heatmap-new';
-
                     if (stat && stat.attempts > 0) {
                         const accuracy = stat.correct / stat.attempts;
                         if (accuracy >= 0.9 && stat.attempts >= 5) className = 'heatmap-cell heatmap-mastered';
@@ -1601,14 +1976,10 @@
         function renderBadges(containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
-
             achievements.forEach(achievement => {
                 const badge = document.createElement('div');
                 badge.className = `badge ${gameState.achievements[achievement.id] ? 'unlocked' : 'locked'}`;
-                badge.innerHTML = `
-                    ${achievement.icon}
-                    <span class="badge-tooltip">${achievement.name}: ${achievement.desc}</span>
-                `;
+                badge.innerHTML = `${achievement.icon}<span class="badge-tooltip">${achievement.name}: ${achievement.desc}</span>`;
                 container.appendChild(badge);
             });
         }
@@ -1621,14 +1992,11 @@
                 const btn = document.createElement('button');
                 btn.className = 'table-btn';
                 btn.textContent = i;
-
                 if (gameState.selectedTables.includes(i)) btn.classList.add('selected');
 
-                // Check if mastered
                 let mastered = true;
                 for (let j = 1; j <= 10; j++) {
-                    const key = `${i}x${j}`;
-                    const stat = factStats[key];
+                    const stat = factStats[`${i}x${j}`];
                     if (!stat || stat.attempts < 5 || (stat.correct / stat.attempts) < 0.9) {
                         mastered = false;
                         break;
@@ -1647,7 +2015,6 @@
                     }
                     saveGameState();
                 };
-
                 container.appendChild(btn);
             }
         }
@@ -1664,27 +2031,23 @@
                 confetti.style.animationDelay = Math.random() * 0.5 + 's';
                 confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
                 celebration.appendChild(confetti);
-
                 setTimeout(() => confetti.remove(), 3000);
             }
         }
 
         // ==================== PERSISTENCE ====================
         function saveGameState() {
-            localStorage.setItem('mathStarsState', JSON.stringify(gameState));
-            localStorage.setItem('mathStarsFactStats', JSON.stringify(factStats));
+            if (!currentProfile) return;
+            localStorage.setItem(`mathStars_${currentProfile.id}_state`, JSON.stringify(gameState));
+            localStorage.setItem(`mathStars_${currentProfile.id}_facts`, JSON.stringify(factStats));
         }
 
         function loadGameState() {
-            const saved = localStorage.getItem('mathStarsState');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                gameState = { ...gameState, ...parsed };
-            }
-            const savedFacts = localStorage.getItem('mathStarsFactStats');
-            if (savedFacts) {
-                factStats = JSON.parse(savedFacts);
-            }
+            if (!currentProfile) return;
+            const saved = localStorage.getItem(`mathStars_${currentProfile.id}_state`);
+            if (saved) gameState = { ...gameState, ...JSON.parse(saved) };
+            const savedFacts = localStorage.getItem(`mathStars_${currentProfile.id}_facts`);
+            if (savedFacts) factStats = JSON.parse(savedFacts);
         }
 
         function checkDailyReset() {
@@ -1700,18 +2063,26 @@
 
         // ==================== INITIALIZATION ====================
         function init() {
-            loadGameState();
-            initFactStats();
-            checkDailyReset();
-            applyTheme(gameState.currentTheme);
-            setupTableSelect();
-            renderThemeSelector();
-            updateDailyProgress();
-            updateDailyChallengeCard();
+            initFirebase();
+            renderAvatarGrid();
 
-            document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊 Ljud på' : '🔇 Ljud av';
+            document.getElementById('nameInput').addEventListener('input', checkCanCreate);
 
-            // Keyboard support
+            if (loadCurrentProfile()) {
+                initFactStats();
+                checkDailyReset();
+                applyTheme(gameState.currentTheme);
+                setupTableSelect();
+                renderThemeSelector();
+                updateDailyProgress();
+                updateDailyChallengeCard();
+                document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊 Ljud på' : '🔇 Ljud av';
+                showScreen('startScreen');
+            } else {
+                loadExistingProfiles();
+                showScreen('loginScreen');
+            }
+
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && document.getElementById('gameScreen').classList.contains('active')) {
                     checkAnswer();
