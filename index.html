@@ -119,6 +119,10 @@
             100% { filter: hue-rotate(360deg); }
         }
 
+        html, body {
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
@@ -128,6 +132,8 @@
             align-items: center;
             padding: 10px;
             transition: background 0.5s;
+            width: 100%;
+            max-width: 100vw;
         }
 
         .container {
@@ -324,6 +330,25 @@
             line-height: 1.4;
         }
 
+        .tip-continue-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .tip-continue-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
         .achievements-section {
             margin-top: 15px;
         }
@@ -433,6 +458,8 @@
 
         .screen {
             display: none;
+            overflow-x: hidden;
+            max-width: 100%;
         }
 
         .screen.active {
@@ -484,6 +511,8 @@
             gap: 3px;
             margin: 15px 0;
             font-size: 0.7em;
+            max-width: 100%;
+            overflow-x: auto;
         }
 
         .heatmap-cell {
@@ -1009,9 +1038,23 @@
                 🧠 Smart övning aktiv
             </div>
 
+            <div id="roundProgress" style="margin: 10px 0; padding: 8px 15px; background: linear-gradient(135deg, #667eea20, #764ba220); border-radius: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <span style="font-weight: bold; color: var(--primary);">Runda <span id="roundNumber">1</span></span>
+                    <span style="color: var(--text-light); font-size: 0.9em;">Fråga <span id="questionInRound">1</span>/10</span>
+                </div>
+                <div style="height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden;">
+                    <div id="roundProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.3s;"></div>
+                </div>
+            </div>
+
             <div class="question-area">
                 <div id="bossArea" style="display: none;">
-                    <div class="boss-emoji" id="bossEmoji">🐉</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div id="playerLives" style="font-size: 1.5em;">❤️❤️❤️</div>
+                        <div class="boss-emoji" id="bossEmoji" style="font-size: 2.5em; animation: bossFloat 1s ease-in-out infinite;">🐉</div>
+                        <div style="font-size: 1.2em; color: var(--secondary);" id="bossHpText">10 HP</div>
+                    </div>
                     <div class="boss-name" id="bossName">Drake</div>
                     <div class="boss-health-bar">
                         <div class="boss-health-fill" id="bossHealth" style="width: 100%"></div>
@@ -1031,6 +1074,7 @@
             <div class="tip-box" id="tipBox">
                 <div class="tip-title">💡 Tips!</div>
                 <div class="tip-content" id="tipContent"></div>
+                <button class="tip-continue-btn" onclick="dismissTipAndContinue()">Jag förstår! ✓</button>
             </div>
 
             <div class="progress-bar-container">
@@ -1059,6 +1103,55 @@
             </div>
 
             <button class="start-btn" onclick="showScreen('startScreen')">🏠 Hem</button>
+        </div>
+
+        <!-- Boss Defeat Screen -->
+        <div class="screen" id="defeatScreen">
+            <div class="mascot">💀</div>
+            <h1 class="title" style="background: linear-gradient(135deg, #e17055, #d63031); -webkit-background-clip: text;">GAME OVER</h1>
+            <p class="subtitle" id="defeatText">Bossen vann denna gång...</p>
+            <p style="color: #888; margin: 15px 0;">men ge inte upp! försök igen 💪</p>
+
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-value" id="defeatBossHp">5</div>
+                    <div class="stat-label">Boss HP kvar</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="defeatScore">0</div>
+                    <div class="stat-label">Poäng</div>
+                </div>
+            </div>
+
+            <button class="start-btn boss-btn" onclick="retryBoss()">🔄 Försök igen</button>
+            <button class="nav-btn" onclick="showScreen('startScreen')">🏠 Hem</button>
+        </div>
+
+        <!-- Round Complete Screen -->
+        <div class="screen" id="roundCompleteScreen">
+            <div class="mascot">🎉</div>
+            <h1 class="title">RUNDA KLAR!</h1>
+            <p class="subtitle" id="roundCompleteText">Runda 1 avklarad!</p>
+
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-value" id="roundCorrect">0</div>
+                    <div class="stat-label">Rätt</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="roundAccuracy">0%</div>
+                    <div class="stat-label">Träffsäkerhet</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="roundPoints">0</div>
+                    <div class="stat-label">Poäng</div>
+                </div>
+            </div>
+
+            <p id="roundMessage" style="font-size: 1.2em; margin: 15px 0; color: var(--secondary);"></p>
+
+            <button class="start-btn" onclick="startNextRound()">▶️ Nästa runda</button>
+            <button class="nav-btn" onclick="showScreen('startScreen')">🏠 Hem</button>
         </div>
     </div>
 
@@ -1417,9 +1510,13 @@
         }
 
         // ==================== SMART ALGORITHM ====================
+        let lastQuestionKey = null; // Track last question to avoid repeats
+
         function getFactScore(key) {
             const stat = factStats[key];
-            if (!stat || stat.attempts === 0) return 0.5;
+
+            // Never practiced? High priority (low score = more likely to be picked)
+            if (!stat || stat.attempts === 0) return -1;
 
             const accuracy = stat.correct / stat.attempts;
             const avgTime = stat.totalTime / stat.attempts;
@@ -1429,7 +1526,11 @@
                 : 7;
             const recencyFactor = Math.min(daysSincePractice / 7, 1);
 
-            return accuracy * 0.5 - timeFactor * 0.25 - recencyFactor * 0.25;
+            // Wrong streak penalty - if they keep getting it wrong, prioritize it
+            const wrongStreakPenalty = stat.streak < 0 ? Math.abs(stat.streak) * 0.2 : 0;
+
+            // Base score: higher = better known, lower = needs more practice
+            return accuracy * 0.4 - timeFactor * 0.2 - recencyFactor * 0.2 - wrongStreakPenalty;
         }
 
         function selectSmartQuestion() {
@@ -1438,6 +1539,9 @@
             for (const table of gameState.selectedTables) {
                 for (let j = 1; j <= 10; j++) {
                     const key = `${table}x${j}`;
+                    // Skip the last question to ensure variety
+                    if (key === lastQuestionKey) continue;
+
                     candidates.push({
                         num1: table,
                         num2: j,
@@ -1447,15 +1551,34 @@
                 }
             }
 
+            // Sort by score (lowest = needs most practice)
             candidates.sort((a, b) => a.score - b.score);
+
+            // Find unpracticed facts (score = -1)
+            const unpracticed = candidates.filter(c => c.score === -1);
+
+            // 30% chance to pick an unpracticed fact if any exist
+            if (unpracticed.length > 0 && Math.random() < 0.3) {
+                const pick = unpracticed[Math.floor(Math.random() * unpracticed.length)];
+                lastQuestionKey = pick.key;
+                return pick;
+            }
+
+            // Take weak pool (30% of candidates that need most practice)
             const poolSize = Math.max(3, Math.floor(candidates.length * 0.3));
             const pool = candidates.slice(0, poolSize);
 
+            // 20% random from all (to keep variety)
             if (Math.random() < 0.2) {
-                return candidates[Math.floor(Math.random() * candidates.length)];
+                const pick = candidates[Math.floor(Math.random() * candidates.length)];
+                lastQuestionKey = pick.key;
+                return pick;
             }
 
-            return pool[Math.floor(Math.random() * pool.length)];
+            // 80% from weak pool
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            lastQuestionKey = pick.key;
+            return pick;
         }
 
         // ==================== TIPS SYSTEM ====================
@@ -1549,6 +1672,12 @@
         let bossHealth = 0;
         let bossStartTime = 0;
         let timerInterval = null;
+        let playerLives = 3;
+
+        // Round system for practice mode
+        const QUESTIONS_PER_ROUND = 10;
+        let currentRound = 1;
+        let questionsThisRound = 0;
 
         function isBossUnlocked(boss) {
             if (boss.unlocked) return true;
@@ -1591,6 +1720,7 @@
             currentBoss = boss;
             bossHealth = boss.health;
             bossStartTime = Date.now();
+            playerLives = 3;
             gameState.selectedTables = boss.tables;
             gameState.mode = 'boss';
 
@@ -1598,10 +1728,35 @@
             document.getElementById('bossEmoji').textContent = boss.emoji;
             document.getElementById('bossName').textContent = boss.name;
             document.getElementById('bossHealth').style.width = '100%';
+            document.getElementById('bossHpText').textContent = boss.health + ' HP';
+            document.getElementById('playerLives').textContent = '❤️❤️❤️';
             document.getElementById('timerBar').style.display = 'block';
             document.getElementById('smartIndicator').style.display = 'none';
 
             startGame('boss');
+        }
+
+        function retryBoss() {
+            if (currentBoss) {
+                startBossBattle(currentBoss);
+            } else {
+                showScreen('bossSelectScreen');
+            }
+        }
+
+        function updatePlayerLives() {
+            const hearts = '❤️'.repeat(playerLives) + '🖤'.repeat(3 - playerLives);
+            document.getElementById('playerLives').textContent = hearts;
+
+            if (playerLives <= 0) {
+                // Player lost!
+                if (timerInterval) clearInterval(timerInterval);
+                document.getElementById('defeatText').textContent = `${currentBoss.emoji} ${currentBoss.name} vann!`;
+                document.getElementById('defeatBossHp').textContent = bossHealth;
+                document.getElementById('defeatScore').textContent = gameState.score;
+                playSound('wrong');
+                showScreen('defeatScreen');
+            }
         }
 
         function updateBossHealth() {
@@ -1812,10 +1967,18 @@
             gameState.total = 0;
             gameState.streak = 0;
 
+            // Reset round counters for practice mode
+            currentRound = 1;
+            questionsThisRound = 0;
+
             if (mode !== 'boss') {
                 document.getElementById('bossArea').style.display = 'none';
                 document.getElementById('timerBar').style.display = 'none';
                 document.getElementById('smartIndicator').style.display = 'block';
+                document.getElementById('roundProgress').style.display = 'block';
+                updateRoundProgress();
+            } else {
+                document.getElementById('roundProgress').style.display = 'none';
             }
 
             showScreen('gameScreen');
@@ -1832,7 +1995,58 @@
             showScreen('startScreen');
         }
 
+        function updateRoundProgress() {
+            document.getElementById('roundNumber').textContent = currentRound;
+            document.getElementById('questionInRound').textContent = questionsThisRound;
+            const percent = (questionsThisRound / QUESTIONS_PER_ROUND) * 100;
+            document.getElementById('roundProgressBar').style.width = percent + '%';
+        }
+
+        function showRoundComplete() {
+            const roundCorrect = gameState.correct;
+            const accuracy = gameState.total > 0 ? Math.round((gameState.correct / gameState.total) * 100) : 0;
+
+            document.getElementById('roundCompleteText').textContent = `Runda ${currentRound} avklarad! No cap! 🔥`;
+            document.getElementById('roundCorrect').textContent = roundCorrect;
+            document.getElementById('roundAccuracy').textContent = accuracy + '%';
+            document.getElementById('roundPoints').textContent = gameState.score;
+
+            // Gen Z style messages based on performance
+            let message = '';
+            if (accuracy >= 90) {
+                message = 'Du är GOATED! Absolut slay! 🐐';
+            } else if (accuracy >= 70) {
+                message = 'Bussin performance! Fortsätt så! 💪';
+            } else if (accuracy >= 50) {
+                message = 'Not bad! Nästa runda blir ännu bättre! 🚀';
+            } else {
+                message = 'Keep grinding! Du klarar detta! 💯';
+            }
+            document.getElementById('roundMessage').textContent = message;
+
+            createConfetti();
+            playSound('levelup');
+            saveGameState();
+            showScreen('roundCompleteScreen');
+        }
+
+        function startNextRound() {
+            currentRound++;
+            questionsThisRound = 0;
+            // Keep score and stats, just reset round counter
+            showScreen('gameScreen');
+            updateRoundProgress();
+            generateQuestion();
+            document.getElementById('answerInput').focus();
+        }
+
         function generateQuestion() {
+            // Check if round is complete (only in practice mode)
+            if (gameState.mode === 'practice' && questionsThisRound >= QUESTIONS_PER_ROUND) {
+                showRoundComplete();
+                return;
+            }
+
             const selected = gameState.mode === 'boss'
                 ? { num1: currentBoss.tables[Math.floor(Math.random() * currentBoss.tables.length)], num2: Math.floor(Math.random() * 10) + 1 }
                 : selectSmartQuestion();
@@ -1843,6 +2057,12 @@
                 answer: selected.num1 * selected.num2,
                 key: `${selected.num1}x${selected.num2}`
             };
+
+            // Increment round progress for practice mode
+            if (gameState.mode === 'practice') {
+                questionsThisRound++;
+                updateRoundProgress();
+            }
 
             document.getElementById('question').textContent = `${selected.num1} × ${selected.num2} = ?`;
             document.getElementById('answerInput').value = '';
@@ -1959,7 +2179,12 @@
 
             gameState.streak = 0;
             factStats[currentQuestion.key].wrong++;
-            factStats[currentQuestion.key].streak = 0;
+            // Track negative streaks for facts repeatedly wrong
+            if (factStats[currentQuestion.key].streak > 0) {
+                factStats[currentQuestion.key].streak = -1;
+            } else {
+                factStats[currentQuestion.key].streak--;
+            }
 
             if (timeout) {
                 feedback.textContent = `Tiden tog slut! Svaret var ${currentQuestion.answer}`;
@@ -1970,13 +2195,36 @@
             feedback.className = 'feedback incorrect';
             playSound('wrong');
 
-            const tip = getTipForQuestion(currentQuestion.num1, currentQuestion.num2);
-            if (tip) {
-                document.getElementById('tipContent').innerHTML = tip;
-                document.getElementById('tipBox').classList.add('visible');
+            // Boss mode punishment - lose a life and boss heals
+            if (currentBoss) {
+                playerLives--;
+                bossHealth = Math.min(bossHealth + 1, currentBoss.health); // Boss heals 1 HP
+                updatePlayerLives();
+                updateBossHealth();
+
+                if (playerLives <= 0) {
+                    return; // Game over handled by updatePlayerLives
+                }
             }
 
-            setTimeout(generateQuestion, 3500);
+            // Only show tips in practice mode (not boss mode)
+            if (gameState.mode === 'practice') {
+                const tip = getTipForQuestion(currentQuestion.num1, currentQuestion.num2);
+                if (tip) {
+                    document.getElementById('tipContent').innerHTML = tip;
+                    document.getElementById('tipBox').classList.add('visible');
+                    // Don't auto-continue - wait for user to click button
+                    return;
+                }
+            }
+
+            setTimeout(generateQuestion, 2000);
+        }
+
+        function dismissTipAndContinue() {
+            document.getElementById('tipBox').classList.remove('visible');
+            generateQuestion();
+            document.getElementById('answerInput').focus();
         }
 
         function levelUp() {
