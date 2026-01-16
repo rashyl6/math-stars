@@ -1688,12 +1688,17 @@
                     const div = document.createElement('div');
                     div.className = 'leaderboard-entry';
                     div.style.cursor = 'pointer';
+                    div.style.display = 'flex';
+                    div.style.alignItems = 'center';
+                    div.style.justifyContent = 'space-between';
                     div.innerHTML = `
-                        <span class="leaderboard-avatar">${profile.avatar}</span>
-                        <span class="leaderboard-name">${profile.name}</span>
-                        <span class="leaderboard-level">Nivå ${state.level || 1} • 💰 ${state.totalScore || 0}</span>
+                        <div onclick="selectExistingProfile(${JSON.stringify(profile).replace(/"/g, '&quot;')})" style="flex: 1; display: flex; align-items: center; gap: 10px;">
+                            <span class="leaderboard-avatar">${profile.avatar}</span>
+                            <span class="leaderboard-name">${profile.name}</span>
+                            <span class="leaderboard-level">Nivå ${state.level || 1} • 💰 ${state.totalScore || 0}</span>
+                        </div>
+                        <button onclick="event.stopPropagation(); deleteProfile('${profile.id}', '${profile.name}')" style="background: none; border: none; font-size: 1em; cursor: pointer; padding: 5px; opacity: 0.5;" title="Ta bort profil">🗑️</button>
                     `;
-                    div.onclick = () => selectExistingProfile(profile);
                     list.appendChild(div);
                 });
             } catch (error) {
@@ -1753,6 +1758,40 @@
             document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊 Ljud på' : '🔇 Ljud av';
             updateProfileDisplay();
             showScreen('startScreen');
+        }
+
+        async function deleteProfile(profileId, profileName) {
+            if (!confirm(`Vill du verkligen ta bort profilen "${profileName}"? Detta går inte att ångra!`)) {
+                return;
+            }
+
+            try {
+                // Delete from Firebase
+                if (firebaseEnabled && database) {
+                    await database.ref('leaderboard/' + profileId).remove();
+                    await database.ref('gameStates/' + profileId).remove();
+                    await database.ref('factStats/' + profileId).remove();
+                }
+
+                // Delete from local storage
+                let profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+                profiles = profiles.filter(p => p.id !== profileId);
+                localStorage.setItem('mathStarsProfiles', JSON.stringify(profiles));
+                localStorage.removeItem(`mathStars_${profileId}_state`);
+                localStorage.removeItem(`mathStars_${profileId}_factStats`);
+
+                // If this was the current profile, clear it
+                if (localStorage.getItem('mathStarsCurrentProfile') === profileId) {
+                    localStorage.removeItem('mathStarsCurrentProfile');
+                    currentProfile = null;
+                }
+
+                // Reload profile list
+                loadExistingProfiles();
+            } catch (error) {
+                console.error('Error deleting profile:', error);
+                alert('Kunde inte ta bort profilen. Försök igen.');
+            }
         }
 
         function updateProfileDisplay() {
