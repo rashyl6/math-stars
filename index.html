@@ -1512,11 +1512,10 @@
                     p.name && p.name.toLowerCase() === nameLower && p.avatar === selectedAvatar
                 );
                 if (duplicateWithSameAvatar) {
-                        alert('Det finns redan en profil med det namnet och den figuren! Välj en annan figur eller ett annat namn.');
-                        btn.disabled = false;
-                        btn.textContent = '🚀 Börja spela!';
-                        return;
-                    }
+                    alert('Det finns redan en profil med det namnet och den figuren! Välj en annan figur eller ett annat namn.');
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Börja spela!';
+                    return;
                 }
 
                 const profileId = 'profile_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
