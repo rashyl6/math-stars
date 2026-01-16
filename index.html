@@ -1464,13 +1464,18 @@
             btn.textContent = '⏳ Skapar...';
 
             try {
-                // Check if name already exists in Firebase
+                // Check if name + avatar combination already exists in Firebase
                 const snapshot = await database.ref('profiles').orderByChild('nameLower').equalTo(name).once('value');
                 if (snapshot.exists()) {
-                    alert('Det finns redan en profil med det namnet! Välj ett annat namn.');
-                    btn.disabled = false;
-                    btn.textContent = '🚀 Börja spela!';
-                    return;
+                    // Check if any matching profile has the same avatar
+                    const profiles = snapshot.val();
+                    const duplicateWithSameAvatar = Object.values(profiles).some(p => p.avatar === selectedAvatar);
+                    if (duplicateWithSameAvatar) {
+                        alert('Det finns redan en profil med det namnet och den figuren! Välj en annan figur eller ett annat namn.');
+                        btn.disabled = false;
+                        btn.textContent = '🚀 Börja spela!';
+                        return;
+                    }
                 }
 
                 const profileId = 'profile_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
