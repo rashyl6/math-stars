@@ -1498,12 +1498,20 @@
 
             try {
                 // Check if name + avatar combination already exists in Firebase
-                const snapshot = await database.ref('profiles').orderByChild('nameLower').equalTo(name).once('value');
-                if (snapshot.exists()) {
-                    // Check if any matching profile has the same avatar
-                    const profiles = snapshot.val();
-                    const duplicateWithSameAvatar = Object.values(profiles).some(p => p.avatar === selectedAvatar);
-                    if (duplicateWithSameAvatar) {
+                // Profiles are stored at root level, so we need to load all and filter
+                const snapshot = await database.ref('/').once('value');
+                const allData = snapshot.val() || {};
+                const existingProfiles = Object.keys(allData)
+                    .filter(key => key.startsWith('profile_'))
+                    .map(key => allData[key])
+                    .filter(p => p && p.name);
+
+                // Check for duplicate name + avatar combination
+                const nameLower = name.toLowerCase();
+                const duplicateWithSameAvatar = existingProfiles.some(p =>
+                    p.name && p.name.toLowerCase() === nameLower && p.avatar === selectedAvatar
+                );
+                if (duplicateWithSameAvatar) {
                         alert('Det finns redan en profil med det namnet och den figuren! Välj en annan figur eller ett annat namn.');
                         btn.disabled = false;
                         btn.textContent = '🚀 Börja spela!';
@@ -1520,8 +1528,8 @@
                     createdAt: Date.now()
                 };
 
-                // Save profile to Firebase
-                await database.ref('profiles/' + profileId).set(profile);
+                // Save profile to Firebase (at root level with profile ID as key)
+                await database.ref(profileId).set(profile);
 
                 // Also cache locally
                 let profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
@@ -1624,10 +1632,16 @@
             }
 
             try {
-                // Load profiles from Firebase
-                const snapshot = await database.ref('profiles').once('value');
-                const profilesData = snapshot.val() || {};
-                let profiles = Object.values(profilesData);
+                // Load profiles from Firebase (they're stored at root level with profile_ prefix)
+                const snapshot = await database.ref('/').once('value');
+                const allData = snapshot.val() || {};
+
+                // Filter out profile entries (keys starting with "profile_")
+                let profiles = Object.keys(allData)
+                    .filter(key => key.startsWith('profile_'))
+                    .map(key => allData[key])
+                    .filter(p => p && p.id && p.name); // Ensure valid profile objects
+
                 const firebaseProfileIds = new Set(profiles.map(p => p.id));
 
                 // Check for local profiles that need to be migrated to Firebase
@@ -1640,7 +1654,8 @@
 
                     for (const profile of profilesToMigrate) {
                         try {
-                            await database.ref('profiles/' + profile.id).set(profile);
+                            // Save at root level with profile ID as key (matching existing structure)
+                            await database.ref(profile.id).set(profile);
 
                             // Also migrate game state if it exists locally
                             const localState = localStorage.getItem(`mathStars_${profile.id}_state`);
