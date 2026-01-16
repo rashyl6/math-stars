@@ -1092,7 +1092,11 @@
             <p class="subtitle">Multiplikationsäventyr!</p>
 
             <div id="existingProfiles" style="display: none; margin-bottom: 20px;">
-                <h3 style="color: var(--secondary); margin-bottom: 15px;">Välj din profil:</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--secondary); margin: 0;">Välj din profil:</h3>
+                    <button onclick="loadExistingProfiles()" style="background: none; border: none; font-size: 1.2em; cursor: pointer; padding: 5px;" title="Ladda om profiler">🔄</button>
+                </div>
+                <div id="connectionStatus" style="font-size: 0.8em; color: #888; margin-bottom: 10px;"></div>
                 <div id="profileList"></div>
             </div>
 
@@ -1604,15 +1608,30 @@
             const container = document.getElementById('existingProfiles');
             const list = document.getElementById('profileList');
             const newProfileHeader = document.getElementById('newProfileHeader');
+            const statusEl = document.getElementById('connectionStatus');
 
             list.innerHTML = '<p style="color: #888; text-align: center;">Laddar profiler...</p>';
             container.style.display = 'block';
+            statusEl.innerHTML = '⏳ Ansluter...';
+
+            // Check if Firebase is available
+            if (!firebaseEnabled || !database) {
+                console.log('Firebase not available, using local storage');
+                statusEl.innerHTML = '📱 Endast lokal lagring (Firebase ej ansluten)';
+                statusEl.style.color = '#e74c3c';
+                loadProfilesFromLocalStorage();
+                return;
+            }
 
             try {
                 // Load profiles from Firebase
                 const snapshot = await database.ref('profiles').once('value');
                 const profilesData = snapshot.val() || {};
                 const profiles = Object.values(profilesData);
+
+                console.log('Loaded', profiles.length, 'profiles from Firebase');
+                statusEl.innerHTML = '☁️ Ansluten till molnet (' + profiles.length + ' profiler)';
+                statusEl.style.color = '#27ae60';
 
                 // Also update local cache
                 localStorage.setItem('mathStarsProfiles', JSON.stringify(profiles));
@@ -1645,34 +1664,46 @@
                     list.appendChild(div);
                 });
             } catch (error) {
-                console.error('Error loading profiles:', error);
-                // Fallback to local storage
-                const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
-                if (profiles.length === 0) {
-                    container.style.display = 'none';
-                    newProfileHeader.style.display = 'none';
-                    return;
-                }
-
-                newProfileHeader.style.display = 'block';
-                list.innerHTML = '';
-
-                profiles.forEach(profile => {
-                    const savedState = localStorage.getItem(`mathStars_${profile.id}_state`);
-                    const state = savedState ? JSON.parse(savedState) : { level: 1, totalScore: 0 };
-
-                    const div = document.createElement('div');
-                    div.className = 'leaderboard-entry';
-                    div.style.cursor = 'pointer';
-                    div.innerHTML = `
-                        <span class="leaderboard-avatar">${profile.avatar}</span>
-                        <span class="leaderboard-name">${profile.name}</span>
-                        <span class="leaderboard-level">Nivå ${state.level} • 💰 ${state.totalScore}</span>
-                    `;
-                    div.onclick = () => selectExistingProfile(profile);
-                    list.appendChild(div);
-                });
+                console.error('Error loading profiles from Firebase:', error);
+                const statusEl = document.getElementById('connectionStatus');
+                statusEl.innerHTML = '⚠️ Kunde inte ansluta till molnet';
+                statusEl.style.color = '#e74c3c';
+                loadProfilesFromLocalStorage();
             }
+        }
+
+        function loadProfilesFromLocalStorage() {
+            const container = document.getElementById('existingProfiles');
+            const list = document.getElementById('profileList');
+            const newProfileHeader = document.getElementById('newProfileHeader');
+
+            const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+            if (profiles.length === 0) {
+                container.style.display = 'none';
+                newProfileHeader.style.display = 'none';
+                list.innerHTML = '';
+                return;
+            }
+
+            container.style.display = 'block';
+            newProfileHeader.style.display = 'block';
+            list.innerHTML = '';
+
+            profiles.forEach(profile => {
+                const savedState = localStorage.getItem(`mathStars_${profile.id}_state`);
+                const state = savedState ? JSON.parse(savedState) : { level: 1, totalScore: 0 };
+
+                const div = document.createElement('div');
+                div.className = 'leaderboard-entry';
+                div.style.cursor = 'pointer';
+                div.innerHTML = `
+                    <span class="leaderboard-avatar">${profile.avatar}</span>
+                    <span class="leaderboard-name">${profile.name}</span>
+                    <span class="leaderboard-level">Nivå ${state.level} • 💰 ${state.totalScore}</span>
+                `;
+                div.onclick = () => selectExistingProfile(profile);
+                list.appendChild(div);
+            });
         }
 
         async function selectExistingProfile(profile) {
