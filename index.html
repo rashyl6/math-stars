@@ -1627,13 +1627,40 @@
                 // Load profiles from Firebase
                 const snapshot = await database.ref('profiles').once('value');
                 const profilesData = snapshot.val() || {};
-                const profiles = Object.values(profilesData);
+                let profiles = Object.values(profilesData);
+                const firebaseProfileIds = new Set(profiles.map(p => p.id));
+
+                // Check for local profiles that need to be migrated to Firebase
+                const localProfiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+                const profilesToMigrate = localProfiles.filter(p => !firebaseProfileIds.has(p.id));
+
+                if (profilesToMigrate.length > 0) {
+                    console.log('Migrating', profilesToMigrate.length, 'local profiles to Firebase');
+                    statusEl.innerHTML = '⬆️ Laddar upp ' + profilesToMigrate.length + ' profiler till molnet...';
+
+                    for (const profile of profilesToMigrate) {
+                        try {
+                            await database.ref('profiles/' + profile.id).set(profile);
+
+                            // Also migrate game state if it exists locally
+                            const localState = localStorage.getItem(`mathStars_${profile.id}_state`);
+                            if (localState) {
+                                await database.ref('gameStates/' + profile.id).set(JSON.parse(localState));
+                            }
+
+                            profiles.push(profile);
+                            console.log('Migrated profile:', profile.name);
+                        } catch (e) {
+                            console.error('Failed to migrate profile:', profile.name, e);
+                        }
+                    }
+                }
 
                 console.log('Loaded', profiles.length, 'profiles from Firebase');
                 statusEl.innerHTML = '☁️ Ansluten till molnet (' + profiles.length + ' profiler)';
                 statusEl.style.color = '#27ae60';
 
-                // Also update local cache
+                // Update local cache with all profiles
                 localStorage.setItem('mathStarsProfiles', JSON.stringify(profiles));
 
                 if (profiles.length === 0) {
