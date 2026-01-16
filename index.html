@@ -2081,7 +2081,7 @@
             { id: 'wizard', name: 'Trollkarl', emoji: '🧙', health: 12, tables: [4, 5], unlocked: true },
             { id: 'robot', name: 'Robot', emoji: '🤖', health: 15, tables: [6, 7], requirement: 'level5' },
             { id: 'alien', name: 'Utomjording', emoji: '👽', health: 18, tables: [8, 9], requirement: 'level8' },
-            { id: 'phoenix', name: 'Fenix', emoji: '🔥', health: 20, tables: [1,2,3,4,5,6,7,8,9,10], requirement: 'level10' }
+            { id: 'phoenix', name: 'Fenix', emoji: '🔥', health: 20, tables: [1,2,3,4,5,6,7,8,9,10], requirement: 'level10', smart: true }
         ];
 
         let currentBoss = null;
@@ -2117,11 +2117,21 @@
                     border-radius: 15px; padding: 15px; margin: 10px 0;
                     opacity: ${unlocked ? 1 : 0.5}; cursor: ${unlocked ? 'pointer' : 'not-allowed'};
                 `;
+                // Format tables nicely
+                let tablesText;
+                if (boss.smart) {
+                    tablesText = '🧠 Dina svagaste tal!';
+                } else if (boss.tables.length === 10) {
+                    tablesText = 'Alla tabeller (1-10)';
+                } else {
+                    tablesText = boss.tables.map(t => t + ':ans').join(' och ') + ' tabell';
+                }
+
                 card.innerHTML = `
                     <div style="font-size: 2em;">${boss.emoji}</div>
                     <div style="font-weight: bold; color: #764ba2;">${boss.name}</div>
                     <div style="font-size: 0.8em; color: #666;">
-                        ${unlocked ? `❤️ ${boss.health} HP | Tabeller: ${boss.tables.join(', ')}` : '🔒 Lås upp på högre nivå'}
+                        ${unlocked ? `❤️ ${boss.health} HP | ${tablesText}` : '🔒 Lås upp på högre nivå'}
                     </div>
                     ${defeated ? '<div style="color: #00b894; font-size: 0.9em;">✓ Besegrad!</div>' : ''}
                 `;
@@ -2474,9 +2484,21 @@
                 return;
             }
 
-            const selected = gameState.mode === 'boss'
-                ? { num1: currentBoss.tables[Math.floor(Math.random() * currentBoss.tables.length)], num2: Math.floor(Math.random() * 10) + 1 }
-                : selectSmartQuestion();
+            let selected;
+            if (gameState.mode === 'boss') {
+                // Final boss (Fenix) uses smart algorithm to target weak spots!
+                if (currentBoss && currentBoss.id === 'phoenix') {
+                    selected = selectSmartQuestion();
+                } else {
+                    // Other bosses use their specific tables randomly
+                    selected = {
+                        num1: currentBoss.tables[Math.floor(Math.random() * currentBoss.tables.length)],
+                        num2: Math.floor(Math.random() * 10) + 1
+                    };
+                }
+            } else {
+                selected = selectSmartQuestion();
+            }
 
             currentQuestion = {
                 num1: selected.num1,
