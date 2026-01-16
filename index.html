@@ -2329,6 +2329,7 @@
         ];
 
         let currentBoss = null;
+        let lastBossFought = null; // For retry functionality
         let bossHealth = 0;
         let bossStartTime = 0;
         let timerInterval = null;
@@ -2414,6 +2415,7 @@
 
         function startBossBattle(boss) {
             currentBoss = boss;
+            lastBossFought = boss; // Store for retry
             bossHealth = boss.health;
             bossStartTime = Date.now();
             playerLives = 3;
@@ -2433,8 +2435,8 @@
         }
 
         function retryBoss() {
-            if (currentBoss) {
-                startBossBattle(currentBoss);
+            if (lastBossFought) {
+                startBossBattle(lastBossFought);
             } else {
                 showScreen('bossSelectScreen');
             }
@@ -2447,7 +2449,11 @@
             if (playerLives <= 0) {
                 // Player lost!
                 if (timerInterval) clearInterval(timerInterval);
-                document.getElementById('defeatText').textContent = `${currentBoss.emoji} ${currentBoss.name} vann!`;
+                if (currentBoss) {
+                    document.getElementById('defeatText').textContent = `${currentBoss.emoji} ${currentBoss.name} vann!`;
+                } else {
+                    document.getElementById('defeatText').textContent = 'Bossen vann!';
+                }
                 document.getElementById('defeatBossHp').textContent = bossHealth;
                 document.getElementById('defeatScore').textContent = gameState.score;
                 playSound('wrong');
@@ -2456,6 +2462,7 @@
         }
 
         function updateBossHealth() {
+            if (!currentBoss) return;
             const percent = (bossHealth / currentBoss.health) * 100;
             document.getElementById('bossHealth').style.width = percent + '%';
 
@@ -2760,6 +2767,12 @@
                 return;
             }
 
+            // Safety check for boss mode
+            if (gameState.mode === 'boss' && !currentBoss) {
+                console.log('Boss battle ended, stopping question generation');
+                return;
+            }
+
             let selected;
             let questionText;
             let answer;
@@ -2816,8 +2829,8 @@
                 switch (currentMathType) {
                     case 'addition': {
                         const range = getDifficultyRange();
-                        const num1 = Math.floor(Math.random() * range.max) + range.min;
-                        const num2 = Math.floor(Math.random() * range.max) + range.min;
+                        const num1 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+                        const num2 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
                         answer = num1 + num2;
                         questionText = `${num1} + ${num2} = ?`;
                         key = `${num1}+${num2}`;
@@ -2827,8 +2840,8 @@
                     case 'subtraction': {
                         const range = getDifficultyRange();
                         // Make sure num1 >= num2 so answer is positive
-                        let num1 = Math.floor(Math.random() * range.max) + range.min;
-                        let num2 = Math.floor(Math.random() * range.max) + range.min;
+                        let num1 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+                        let num2 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
                         if (num2 > num1) [num1, num2] = [num2, num1];
                         answer = num1 - num2;
                         questionText = `${num1} − ${num2} = ?`;
@@ -2837,7 +2850,7 @@
                         break;
                     }
                     case 'tiokompisar': {
-                        const num1 = Math.floor(Math.random() * 10) + 1; // 1-10
+                        const num1 = Math.floor(Math.random() * 9) + 1; // 1-9 (so answer is 1-9, not 0)
                         answer = 10 - num1;
                         questionText = `${num1} + ? = 10`;
                         key = `10kompis_${num1}`;
