@@ -299,6 +299,35 @@
             75% { transform: translateX(10px); }
         }
 
+        .encouragement {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 10px 0;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 20px;
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .encouragement.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes bounce-in {
+            0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+            50% { transform: scale(1.05) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .encouragement.pop {
+            animation: bounce-in 0.4s ease forwards;
+        }
+
         .tip-box {
             background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
             border-radius: 15px;
@@ -1284,7 +1313,7 @@
             <div class="progress-bar-container">
                 <div class="progress-bar" id="xpBar" style="width: 0%"></div>
             </div>
-            <p style="font-style: italic; color: #888; margin-top: 5px; font-size: 0.9em;" id="encouragement">Du klarar detta! 💪</p>
+            <div class="encouragement" id="encouragement">Du klarar detta! 💪</div>
 
             <button class="nav-btn" onclick="endGame()">🏠 Hem</button>
         </div>
@@ -1956,8 +1985,8 @@
             ocean: { name: 'Hav', cost: 2000, mascot: '🐬', vibe: 'wave', desc: 'Dyk ner i djupet!', rarity: 'uncommon' },
             forest: { name: 'Skog', cost: 3000, mascot: '🍄', vibe: 'nature', desc: 'Mysigt i skogen!', rarity: 'rare' },
             unicorn: { name: 'Enhörning', cost: 5000, mascot: '🦄', vibe: 'sparkle', desc: 'Magiskt och glittrigt!', rarity: 'epic' },
-            skull: { name: 'Skibidi', cost: 7500, mascot: '💀', vibe: 'brainrot', desc: 'Maximum brain rot! 🧠', rarity: 'legendary' },
-            goat: { name: 'GOAT', cost: 10000, mascot: '🐐', vibe: 'goated', desc: 'För de GOATED! No cap!', rarity: 'mythic' }
+            skull: { name: 'Skelett', cost: 7500, mascot: '💀', vibe: 'spooky', desc: 'Lite läskigt och kul! 🎃', rarity: 'legendary' },
+            goat: { name: 'Mästare', cost: 10000, mascot: '🐐', vibe: 'champion', desc: 'För riktiga mästare! 🏆', rarity: 'mythic' }
         };
 
         function applyTheme(themeName) {
@@ -2325,58 +2354,58 @@
 
         // ==================== ACHIEVEMENTS ====================
         const achievements = [
-            { id: 'first_correct', name: 'Baby W', icon: '⭐', desc: 'Första rätta svaret', condition: (s) => s.totalCorrect >= 1 },
-            { id: 'ten_correct', name: 'Lowkey Smart', icon: '🧠', desc: '10 rätt no cap', condition: (s) => s.totalCorrect >= 10 },
-            { id: 'fifty_correct', name: 'Highkey Slay', icon: '💅', desc: '50 rätt fr fr', condition: (s) => s.totalCorrect >= 50 },
-            { id: 'hundred_correct', name: 'Main Character', icon: '👑', desc: '100 rätt - du är THAT girl', condition: (s) => s.totalCorrect >= 100 },
-            { id: 'fivehundred_correct', name: 'Literally Goated', icon: '🐐', desc: '500 rätt - touch grass?', condition: (s) => s.totalCorrect >= 500 },
-            { id: 'streak_5', name: 'Ight Bet', icon: '🔥', desc: '5 i rad', condition: (s) => s.bestStreak >= 5 },
-            { id: 'streak_10', name: 'Ate That', icon: '🍽️', desc: '10 i rad - no crumbs', condition: (s) => s.bestStreak >= 10 },
-            { id: 'streak_20', name: 'Sigma Mode', icon: '🗿', desc: '20 i rad - built different', condition: (s) => s.bestStreak >= 20 },
-            { id: 'streak_50', name: 'Final Boss', icon: '💀', desc: '50 i rad - actual demon', condition: (s) => s.bestStreak >= 50 },
-            { id: 'level_5', name: 'Era Starts', icon: '📈', desc: 'Nivå 5 - glow up', condition: (s) => s.level >= 5 },
-            { id: 'level_10', name: 'Rent Free', icon: '🏠', desc: 'Nivå 10 - i mattens hjärna', condition: (s) => s.level >= 10 },
-            { id: 'daily_goal', name: 'Grindset', icon: '💪', desc: 'Dagens mål klarat', condition: (s) => s.dailyQuestions >= s.dailyGoal },
-            { id: 'boss_slayer', name: 'Boss Diff', icon: '⚔️', desc: 'Besegra en boss', condition: (s) => s.bossesDefeated.length >= 1 },
-            { id: 'all_bosses', name: 'GG EZ', icon: '🎮', desc: 'Alla bossar down', condition: (s) => s.bossesDefeated.length >= bosses.length },
-            { id: 'theme_collector', name: 'Drip Check', icon: '🎨', desc: '3 teman - aesthetic', condition: (s) => s.unlockedThemes.length >= 3 },
-            { id: 'speed_demon', name: 'Speedrun', icon: '⚡', desc: 'Under 2 sek - cracked', condition: (s) => s.fastAnswer },
-            { id: 'rich', name: 'Stonks', icon: '📊', desc: '10000 poäng totalt', condition: (s) => s.totalScore >= 10000 }
+            { id: 'first_correct', name: 'Första steget', icon: '⭐', desc: 'Första rätta svaret', condition: (s) => s.totalCorrect >= 1 },
+            { id: 'ten_correct', name: 'Smart start', icon: '🧠', desc: '10 rätt svar', condition: (s) => s.totalCorrect >= 10 },
+            { id: 'fifty_correct', name: 'På rulle', icon: '💅', desc: '50 rätt svar', condition: (s) => s.totalCorrect >= 50 },
+            { id: 'hundred_correct', name: 'Stjärna', icon: '👑', desc: '100 rätt svar', condition: (s) => s.totalCorrect >= 100 },
+            { id: 'fivehundred_correct', name: 'Mattemästare', icon: '🐐', desc: '500 rätt svar', condition: (s) => s.totalCorrect >= 500 },
+            { id: 'streak_5', name: 'Bra flyt', icon: '🔥', desc: '5 rätt i rad', condition: (s) => s.bestStreak >= 5 },
+            { id: 'streak_10', name: 'Superfokus', icon: '🍽️', desc: '10 rätt i rad', condition: (s) => s.bestStreak >= 10 },
+            { id: 'streak_20', name: 'Koncentrerad', icon: '🗿', desc: '20 rätt i rad', condition: (s) => s.bestStreak >= 20 },
+            { id: 'streak_50', name: 'Ofelbar', icon: '💀', desc: '50 rätt i rad', condition: (s) => s.bestStreak >= 50 },
+            { id: 'level_5', name: 'Växer', icon: '📈', desc: 'Nå nivå 5', condition: (s) => s.level >= 5 },
+            { id: 'level_10', name: 'Expert', icon: '🏠', desc: 'Nå nivå 10', condition: (s) => s.level >= 10 },
+            { id: 'daily_goal', name: 'Målmedveten', icon: '💪', desc: 'Klara dagens mål', condition: (s) => s.dailyQuestions >= s.dailyGoal },
+            { id: 'boss_slayer', name: 'Bossbesegrare', icon: '⚔️', desc: 'Besegra en boss', condition: (s) => s.bossesDefeated.length >= 1 },
+            { id: 'all_bosses', name: 'Champion', icon: '🎮', desc: 'Besegra alla bossar', condition: (s) => s.bossesDefeated.length >= bosses.length },
+            { id: 'theme_collector', name: 'Samlare', icon: '🎨', desc: 'Lås upp 3 teman', condition: (s) => s.unlockedThemes.length >= 3 },
+            { id: 'speed_demon', name: 'Blixtsnabb', icon: '⚡', desc: 'Svar under 2 sekunder', condition: (s) => s.fastAnswer },
+            { id: 'rich', name: 'Poängsamlare', icon: '📊', desc: '10000 poäng totalt', condition: (s) => s.totalScore >= 10000 }
         ];
 
-        const levelTitles = ['Noob', 'Lansen', 'Tryhard', 'Grinder', 'Slay', 'No Cap', 'Sigma', 'Based', 'Goated', 'Bussin', 'Legend', 'Rizz Lord', 'Main Character', 'Final Boss', 'Mattedrottning 👑'];
+        const levelTitles = ['Nybörjare', 'Lansen', 'Räknare', 'Talknäckare', 'Stjärna', 'Superhjärna', 'Mästare', 'Expert', 'Champion', 'Legend', 'Geni', 'Mattewizard', 'Mattehjälte', 'Mattekung', 'Mattedrottning 👑'];
 
         const encouragements = [
-            "du fixar detta fr fr 💪",
-            "no cap du är cracked 🔥",
-            "slay bestie! ✨",
-            "main character energy 💅",
-            "you ate that up 🍽️",
-            "era definieras nu 🚀",
-            "built different fr 💀",
-            "W människa 👑"
+            "Du fixar detta! 💪",
+            "Kämpa på! 🔥",
+            "Snart i mål! ✨",
+            "Du är grym! 🌟",
+            "Fortsätt så! 🚀",
+            "Bra jobbat! 👏",
+            "Du rockar! 🎸",
+            "Stjärna! ⭐"
         ];
         const correctMessages = [
-            "SLAY! 💅✨",
-            "no cap W 🔥",
-            "du är GOATED 🐐",
-            "ATE AND LEFT NO CRUMBS 🍽️",
-            "bussin fr fr 💀",
-            "sigma grindset 🗿",
-            "LETS GOOO 🚀",
-            "actual legend 👑",
-            "gg ez 🎮",
-            "big brain moment 🧠",
-            "CEO of matte 💼",
-            "rent free i din hjärna 🏠"
+            "Rätt! 🌟",
+            "Snyggt! ✨",
+            "Perfekt! 🎯",
+            "Toppen! 🔥",
+            "Grym! 💪",
+            "Bra! 👏",
+            "Yes! 🚀",
+            "Superbt! ⭐",
+            "Pricksäkert! 🎯",
+            "Snillrikt! 🧠",
+            "Fantastiskt! 🌈",
+            "Mästerligt! 👑"
         ];
         const incorrectMessages = [
-            "L men du tar nästa 💪",
-            "nah vi går igen 🔄",
-            "plot twist: du fixar det 📖",
-            "character development arc 📈",
-            "inte idag men imorgon 🌅",
-            "vibe check failed men vi kör 💀"
+            "Nästan!",
+            "Försök igen!",
+            "Du klarar nästa!",
+            "Snart där!",
+            "Ge inte upp!",
+            "Övning ger färdighet!"
         ];
 
         // ==================== GAME LOGIC ====================
@@ -2420,6 +2449,12 @@
 
             showScreen('gameScreen');
             updateDisplay();
+
+            // Show initial encouragement
+            const encouragementEl = document.getElementById('encouragement');
+            encouragementEl.textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
+            encouragementEl.classList.add('visible');
+
             generateQuestion();
             document.getElementById('answerInput').focus();
 
@@ -2443,21 +2478,21 @@
             const roundCorrect = gameState.correct;
             const accuracy = gameState.total > 0 ? Math.round((gameState.correct / gameState.total) * 100) : 0;
 
-            document.getElementById('roundCompleteText').textContent = `Runda ${currentRound} avklarad! No cap! 🔥`;
+            document.getElementById('roundCompleteText').textContent = `Runda ${currentRound} avklarad! Bra jobbat! 🔥`;
             document.getElementById('roundCorrect').textContent = roundCorrect;
             document.getElementById('roundAccuracy').textContent = accuracy + '%';
             document.getElementById('roundPoints').textContent = gameState.score;
 
-            // Gen Z style messages based on performance
+            // Performance messages
             let message = '';
             if (accuracy >= 90) {
-                message = 'Du är GOATED! Absolut slay! 🐐';
+                message = 'Fantastiskt! Du är en stjärna! ⭐';
             } else if (accuracy >= 70) {
-                message = 'Bussin performance! Fortsätt så! 💪';
+                message = 'Bra jobbat! Fortsätt så! 💪';
             } else if (accuracy >= 50) {
-                message = 'Not bad! Nästa runda blir ännu bättre! 🚀';
+                message = 'Bra försök! Nästa runda blir ännu bättre! 🚀';
             } else {
-                message = 'Keep grinding! Du klarar detta! 💯';
+                message = 'Fortsätt öva! Du klarar detta! 💯';
             }
             document.getElementById('roundMessage').textContent = message;
 
@@ -2523,8 +2558,14 @@
 
             if (gameState.mode === 'boss') startQuestionTimer();
 
+            // Show encouragement with animation (30% chance per question)
+            const encouragementEl = document.getElementById('encouragement');
             if (Math.random() < 0.3) {
-                document.getElementById('encouragement').textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
+                encouragementEl.classList.remove('visible', 'pop');
+                encouragementEl.textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
+                // Trigger reflow for animation
+                void encouragementEl.offsetWidth;
+                encouragementEl.classList.add('visible', 'pop');
             }
         }
 
