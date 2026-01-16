@@ -505,6 +505,81 @@
             margin: 12px 0;
         }
 
+        .shop-preview {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            border-radius: 15px;
+            padding: 12px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+        }
+
+        .shop-preview:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .shop-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .shop-preview-arrow {
+            font-size: 1.2em;
+        }
+
+        .shop-preview-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .shop-preview-mascot {
+            font-size: 2em;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shop-preview-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .shop-preview-name {
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
+        .shop-preview-progress {
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .shop-preview-fill {
+            height: 100%;
+            background: #ffeaa7;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .shop-preview-cost {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+
         .heatmap {
             display: grid;
             grid-template-columns: repeat(11, 1fr);
@@ -1000,6 +1075,7 @@
                 </div>
                 <h3 style="color: var(--secondary); margin: 10px 0 10px;" id="nameLabel">Vad heter du?</h3>
                 <input type="text" class="name-input" id="nameInput" placeholder="Ditt namn..." maxlength="15">
+                <p id="nameHint" style="display: none; color: #e74c3c; font-size: 0.85em; margin-top: 5px;"></p>
 
                 <h3 style="color: var(--secondary); margin: 20px 0 10px;">Välj din figur!</h3>
                 <div class="avatar-grid" id="avatarGrid"></div>
@@ -1038,6 +1114,17 @@
 
             <button class="start-btn" onclick="startGame('practice')">▶️ Öva</button>
             <button class="mode-btn-large boss-btn" onclick="showBossSelect()">🐉 Bossutmaning</button>
+
+            <!-- Shop Preview Card -->
+            <div class="shop-preview" id="shopPreview" onclick="showScreen('settingsScreen'); setTimeout(renderThemeSelector, 100);">
+                <div class="shop-preview-header">
+                    <span>🎨 Skin Shop</span>
+                    <span class="shop-preview-arrow">→</span>
+                </div>
+                <div class="shop-preview-content" id="shopPreviewContent">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
 
             <div style="margin-top: 15px;">
                 <button class="nav-btn" onclick="showScreen('leaderboardScreen')">🏆 Topplista</button>
@@ -1335,114 +1422,237 @@
             checkCanCreate();
         }
 
+        // Only allow letters (including Swedish å, ä, ö) and spaces
+        function isValidName(name) {
+            // Must be 2-15 characters, only letters and spaces
+            const nameRegex = /^[a-zA-ZåäöÅÄÖéÉüÜ][a-zA-ZåäöÅÄÖéÉüÜ\s]{1,14}$/;
+            if (!nameRegex.test(name)) return false;
+
+            // Basic blocklist for inappropriate words
+            const blocklist = ['admin', 'test', 'fuck', 'shit', 'dick', 'ass', 'sex', 'porn', 'nazi', 'hitler'];
+            const lowerName = name.toLowerCase();
+            if (blocklist.some(word => lowerName.includes(word))) return false;
+
+            return true;
+        }
+
         function checkCanCreate() {
             const name = document.getElementById('nameInput').value.trim();
             const btn = document.getElementById('createProfileBtn');
-            btn.disabled = !(name.length >= 2 && selectedAvatar);
-        }
+            const isValid = name.length >= 2 && selectedAvatar && isValidName(name);
+            btn.disabled = !isValid;
 
-        function createProfile() {
-            const name = document.getElementById('nameInput').value.trim();
-            if (!name || !selectedAvatar) return;
-
-            const profileId = 'profile_' + Date.now();
-            const profile = {
-                id: profileId,
-                name: name,
-                avatar: selectedAvatar,
-                createdAt: Date.now()
-            };
-
-            // Save profile list
-            let profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
-            profiles.push(profile);
-            localStorage.setItem('mathStarsProfiles', JSON.stringify(profiles));
-
-            // Set as current profile
-            localStorage.setItem('mathStarsCurrentProfile', profileId);
-
-            // Initialize game state for this profile
-            currentProfile = profile;
-            initializeGameStateForProfile(profileId);
-
-            // Go to main screen
-            updateProfileDisplay();
-            showScreen('startScreen');
-        }
-
-        function initializeGameStateForProfile(profileId) {
-            const existingState = localStorage.getItem(`mathStars_${profileId}_state`);
-            if (!existingState) {
-                // New profile - initialize fresh state
-                gameState = {
-                    score: 0,
-                    correct: 0,
-                    total: 0,
-                    streak: 0,
-                    bestStreak: 0,
-                    level: 1,
-                    xp: 0,
-                    xpToNext: 100,
-                    totalScore: 0,
-                    selectedTables: [2, 3, 4, 5],
-                    mode: 'practice',
-                    dailyQuestions: 0,
-                    dailyGoal: 20,
-                    lastPlayDate: null,
-                    totalCorrect: 0,
-                    achievements: {},
-                    masteredTables: [],
-                    currentTheme: 'default',
-                    unlockedThemes: ['default'],
-                    soundEnabled: true,
-                    bossesDefeated: [],
-                    dailyChallengeCompleted: false
-                };
-                factStats = {};
-                saveGameState();
-            } else {
-                loadGameState();
+            // Show hint if name is invalid
+            const hint = document.getElementById('nameHint');
+            if (hint) {
+                if (name.length >= 2 && !isValidName(name)) {
+                    hint.textContent = 'Använd bara bokstäver (inga siffror eller symboler)';
+                    hint.style.display = 'block';
+                } else {
+                    hint.style.display = 'none';
+                }
             }
         }
 
-        function loadExistingProfiles() {
-            const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+        async function createProfile() {
+            const name = document.getElementById('nameInput').value.trim().toLowerCase();
+            const displayName = document.getElementById('nameInput').value.trim();
+            if (!displayName || !selectedAvatar || !isValidName(displayName)) return;
+
+            const btn = document.getElementById('createProfileBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Skapar...';
+
+            try {
+                // Check if name already exists in Firebase
+                const snapshot = await database.ref('profiles').orderByChild('nameLower').equalTo(name).once('value');
+                if (snapshot.exists()) {
+                    alert('Det finns redan en profil med det namnet! Välj ett annat namn.');
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Börja spela!';
+                    return;
+                }
+
+                const profileId = 'profile_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const profile = {
+                    id: profileId,
+                    name: displayName,
+                    nameLower: name,
+                    avatar: selectedAvatar,
+                    createdAt: Date.now()
+                };
+
+                // Save profile to Firebase
+                await database.ref('profiles/' + profileId).set(profile);
+
+                // Also cache locally
+                let profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+                profiles.push(profile);
+                localStorage.setItem('mathStarsProfiles', JSON.stringify(profiles));
+
+                // Set as current profile
+                localStorage.setItem('mathStarsCurrentProfile', profileId);
+
+                // Initialize game state for this profile
+                currentProfile = profile;
+                initializeGameStateForProfile(profileId);
+
+                // Go to main screen
+                updateProfileDisplay();
+                showScreen('startScreen');
+            } catch (error) {
+                console.error('Error creating profile:', error);
+                alert('Kunde inte skapa profil. Kontrollera din internetanslutning.');
+                btn.disabled = false;
+                btn.textContent = '🚀 Börja spela!';
+            }
+        }
+
+        async function initializeGameStateForProfile(profileId) {
+            // Check Firebase first, then localStorage
+            try {
+                const snapshot = await database.ref('gameStates/' + profileId).once('value');
+                if (snapshot.exists()) {
+                    gameState = { ...getDefaultGameState(), ...snapshot.val() };
+                    const factsSnapshot = await database.ref('factStats/' + profileId).once('value');
+                    if (factsSnapshot.exists()) {
+                        factStats = factsSnapshot.val();
+                    }
+                    // Update localStorage cache
+                    localStorage.setItem(`mathStars_${profileId}_state`, JSON.stringify(gameState));
+                    localStorage.setItem(`mathStars_${profileId}_facts`, JSON.stringify(factStats));
+                    return;
+                }
+            } catch (error) {
+                console.error('Firebase load error:', error);
+            }
+
+            // Fallback to localStorage
+            const existingState = localStorage.getItem(`mathStars_${profileId}_state`);
+            if (!existingState) {
+                // New profile - initialize fresh state
+                gameState = getDefaultGameState();
+                factStats = {};
+                saveGameState();
+            } else {
+                await loadGameState();
+            }
+        }
+
+        function getDefaultGameState() {
+            return {
+                score: 0,
+                correct: 0,
+                total: 0,
+                streak: 0,
+                bestStreak: 0,
+                level: 1,
+                xp: 0,
+                xpToNext: 100,
+                totalScore: 0,
+                selectedTables: [2, 3, 4, 5],
+                mode: 'practice',
+                dailyQuestions: 0,
+                dailyGoal: 20,
+                lastPlayDate: null,
+                totalCorrect: 0,
+                achievements: {},
+                masteredTables: [],
+                currentTheme: 'default',
+                unlockedThemes: ['default'],
+                soundEnabled: true,
+                bossesDefeated: [],
+                dailyChallengeCompleted: false
+            };
+        }
+
+        async function loadExistingProfiles() {
             const container = document.getElementById('existingProfiles');
             const list = document.getElementById('profileList');
             const newProfileHeader = document.getElementById('newProfileHeader');
 
-            if (profiles.length === 0) {
-                container.style.display = 'none';
-                newProfileHeader.style.display = 'none';
-                return;
-            }
-
+            list.innerHTML = '<p style="color: #888; text-align: center;">Laddar profiler...</p>';
             container.style.display = 'block';
-            newProfileHeader.style.display = 'block';
-            list.innerHTML = '';
 
-            profiles.forEach(profile => {
-                // Load saved state to show level/coins
-                const savedState = localStorage.getItem(`mathStars_${profile.id}_state`);
-                const state = savedState ? JSON.parse(savedState) : { level: 1, totalScore: 0 };
+            try {
+                // Load profiles from Firebase
+                const snapshot = await database.ref('profiles').once('value');
+                const profilesData = snapshot.val() || {};
+                const profiles = Object.values(profilesData);
 
-                const div = document.createElement('div');
-                div.className = 'leaderboard-entry';
-                div.style.cursor = 'pointer';
-                div.innerHTML = `
-                    <span class="leaderboard-avatar">${profile.avatar}</span>
-                    <span class="leaderboard-name">${profile.name}</span>
-                    <span class="leaderboard-level">Nivå ${state.level} • 💰 ${state.totalScore}</span>
-                `;
-                div.onclick = () => selectExistingProfile(profile);
-                list.appendChild(div);
-            });
+                // Also update local cache
+                localStorage.setItem('mathStarsProfiles', JSON.stringify(profiles));
+
+                if (profiles.length === 0) {
+                    container.style.display = 'none';
+                    newProfileHeader.style.display = 'none';
+                    return;
+                }
+
+                newProfileHeader.style.display = 'block';
+                list.innerHTML = '';
+
+                // Load game states from Firebase for each profile
+                const statesSnapshot = await database.ref('gameStates').once('value');
+                const allStates = statesSnapshot.val() || {};
+
+                profiles.forEach(profile => {
+                    const state = allStates[profile.id] || { level: 1, totalScore: 0 };
+
+                    const div = document.createElement('div');
+                    div.className = 'leaderboard-entry';
+                    div.style.cursor = 'pointer';
+                    div.innerHTML = `
+                        <span class="leaderboard-avatar">${profile.avatar}</span>
+                        <span class="leaderboard-name">${profile.name}</span>
+                        <span class="leaderboard-level">Nivå ${state.level || 1} • 💰 ${state.totalScore || 0}</span>
+                    `;
+                    div.onclick = () => selectExistingProfile(profile);
+                    list.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading profiles:', error);
+                // Fallback to local storage
+                const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
+                if (profiles.length === 0) {
+                    container.style.display = 'none';
+                    newProfileHeader.style.display = 'none';
+                    return;
+                }
+
+                newProfileHeader.style.display = 'block';
+                list.innerHTML = '';
+
+                profiles.forEach(profile => {
+                    const savedState = localStorage.getItem(`mathStars_${profile.id}_state`);
+                    const state = savedState ? JSON.parse(savedState) : { level: 1, totalScore: 0 };
+
+                    const div = document.createElement('div');
+                    div.className = 'leaderboard-entry';
+                    div.style.cursor = 'pointer';
+                    div.innerHTML = `
+                        <span class="leaderboard-avatar">${profile.avatar}</span>
+                        <span class="leaderboard-name">${profile.name}</span>
+                        <span class="leaderboard-level">Nivå ${state.level} • 💰 ${state.totalScore}</span>
+                    `;
+                    div.onclick = () => selectExistingProfile(profile);
+                    list.appendChild(div);
+                });
+            }
         }
 
-        function selectExistingProfile(profile) {
+        async function selectExistingProfile(profile) {
             currentProfile = profile;
             localStorage.setItem('mathStarsCurrentProfile', profile.id);
-            initializeGameStateForProfile(profile.id);
+            await initializeGameStateForProfile(profile.id);
+            initFactStats();
+            checkDailyReset();
+            applyTheme(gameState.currentTheme);
+            setupTableSelect();
+            renderThemeSelector();
+            updateDailyProgress();
+            updateDailyChallengeCard();
+            document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊 Ljud på' : '🔇 Ljud av';
             updateProfileDisplay();
             showScreen('startScreen');
         }
@@ -1823,6 +2033,43 @@
             }
         }
 
+        function updateShopPreview() {
+            const container = document.getElementById('shopPreviewContent');
+            if (!container) return;
+
+            // Find the next skin to unlock (cheapest one not owned)
+            const lockedThemes = Object.entries(themes)
+                .filter(([key]) => !gameState.unlockedThemes.includes(key))
+                .sort((a, b) => a[1].cost - b[1].cost);
+
+            if (lockedThemes.length === 0) {
+                // All skins unlocked!
+                container.innerHTML = `
+                    <div class="shop-preview-mascot">🎉</div>
+                    <div class="shop-preview-info">
+                        <div class="shop-preview-name">Alla skins upplåsta!</div>
+                        <div class="shop-preview-cost">Du har samlat alla ${Object.keys(themes).length} skins!</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const [nextKey, nextTheme] = lockedThemes[0];
+            const progress = Math.min(100, (gameState.totalScore / nextTheme.cost) * 100);
+            const remaining = Math.max(0, nextTheme.cost - gameState.totalScore);
+
+            container.innerHTML = `
+                <div class="shop-preview-mascot">${nextTheme.mascot}</div>
+                <div class="shop-preview-info">
+                    <div class="shop-preview-name">${nextTheme.name} (${nextTheme.rarity})</div>
+                    <div class="shop-preview-progress">
+                        <div class="shop-preview-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="shop-preview-cost">${remaining > 0 ? `${remaining} poäng kvar!` : '✅ Kan låsas upp!'}</div>
+                </div>
+            `;
+        }
+
         // ==================== BOSSES ====================
         const bosses = [
             { id: 'dragon', name: 'Drake', emoji: '🐉', health: 10, tables: [2, 3], unlocked: true },
@@ -1928,6 +2175,12 @@
             document.getElementById('bossHealth').style.width = percent + '%';
 
             if (bossHealth <= 0) {
+                // Stop the timer immediately
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+
                 if (!gameState.bossesDefeated.includes(currentBoss.id)) {
                     gameState.bossesDefeated.push(currentBoss.id);
                 }
@@ -1935,6 +2188,10 @@
                 document.getElementById('victoryText').textContent = `Du besegrade ${currentBoss.name}!`;
                 document.getElementById('victoryScore').textContent = gameState.score;
                 document.getElementById('victoryTime').textContent = timeElapsed + 's';
+
+                // Clear the boss to prevent further actions
+                currentBoss = null;
+
                 createConfetti();
                 playSound('victory');
                 saveGameState();
@@ -2120,6 +2377,7 @@
                 updateDailyProgress();
                 updateDailyChallengeCard();
                 updateProfileDisplay();
+                updateShopPreview();
             }
             if (screenId === 'leaderboardScreen') loadLeaderboard();
         }
@@ -2327,6 +2585,11 @@
             if (gameState.mode === 'boss') {
                 bossHealth--;
                 updateBossHealth();
+
+                // If boss was defeated, don't generate another question
+                if (bossHealth <= 0 || !currentBoss) {
+                    return;
+                }
             }
 
             feedback.textContent = correctMessages[Math.floor(Math.random() * correctMessages.length)];
@@ -2542,16 +2805,51 @@
         // ==================== PERSISTENCE ====================
         function saveGameState() {
             if (!currentProfile) return;
+
+            // Save to localStorage (immediate)
             localStorage.setItem(`mathStars_${currentProfile.id}_state`, JSON.stringify(gameState));
             localStorage.setItem(`mathStars_${currentProfile.id}_facts`, JSON.stringify(factStats));
+
+            // Also save to Firebase (async, for cross-device sync)
+            database.ref('gameStates/' + currentProfile.id).set(gameState)
+                .catch(err => console.error('Firebase save error:', err));
+            database.ref('factStats/' + currentProfile.id).set(factStats)
+                .catch(err => console.error('Firebase factStats save error:', err));
         }
 
-        function loadGameState() {
+        async function loadGameState() {
             if (!currentProfile) return;
-            const saved = localStorage.getItem(`mathStars_${currentProfile.id}_state`);
-            if (saved) gameState = { ...gameState, ...JSON.parse(saved) };
-            const savedFacts = localStorage.getItem(`mathStars_${currentProfile.id}_facts`);
-            if (savedFacts) factStats = JSON.parse(savedFacts);
+
+            try {
+                // Try to load from Firebase first (most up-to-date)
+                const stateSnapshot = await database.ref('gameStates/' + currentProfile.id).once('value');
+                const factsSnapshot = await database.ref('factStats/' + currentProfile.id).once('value');
+
+                if (stateSnapshot.exists()) {
+                    gameState = { ...gameState, ...stateSnapshot.val() };
+                    // Also update localStorage cache
+                    localStorage.setItem(`mathStars_${currentProfile.id}_state`, JSON.stringify(gameState));
+                } else {
+                    // Fallback to localStorage
+                    const saved = localStorage.getItem(`mathStars_${currentProfile.id}_state`);
+                    if (saved) gameState = { ...gameState, ...JSON.parse(saved) };
+                }
+
+                if (factsSnapshot.exists()) {
+                    factStats = factsSnapshot.val();
+                    localStorage.setItem(`mathStars_${currentProfile.id}_facts`, JSON.stringify(factStats));
+                } else {
+                    const savedFacts = localStorage.getItem(`mathStars_${currentProfile.id}_facts`);
+                    if (savedFacts) factStats = JSON.parse(savedFacts);
+                }
+            } catch (error) {
+                console.error('Error loading from Firebase:', error);
+                // Fallback to localStorage
+                const saved = localStorage.getItem(`mathStars_${currentProfile.id}_state`);
+                if (saved) gameState = { ...gameState, ...JSON.parse(saved) };
+                const savedFacts = localStorage.getItem(`mathStars_${currentProfile.id}_facts`);
+                if (savedFacts) factStats = JSON.parse(savedFacts);
+            }
         }
 
         function checkDailyReset() {
