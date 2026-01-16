@@ -1192,7 +1192,7 @@
             </div>
 
             <button class="start-btn" onclick="startGame('practice')">▶️ Öva</button>
-            <button class="mode-btn-large boss-btn" onclick="showBossSelect()">🐉 Bossutmaning (×)</button>
+            <button class="mode-btn-large boss-btn" onclick="showBossSelect()">🐉 Bossutmaning</button>
 
             <!-- Shop Preview Card -->
             <div class="shop-preview" id="shopPreview" onclick="showScreen('settingsScreen'); setTimeout(renderThemeSelector, 100);">
@@ -2290,11 +2290,42 @@
 
         // ==================== BOSSES ====================
         const bosses = [
-            { id: 'dragon', name: 'Drake', emoji: '🐉', health: 10, tables: [2, 3], unlocked: true },
-            { id: 'wizard', name: 'Trollkarl', emoji: '🧙', health: 12, tables: [4, 5], unlocked: true },
-            { id: 'robot', name: 'Robot', emoji: '🤖', health: 15, tables: [6, 7], requirement: 'level5' },
-            { id: 'alien', name: 'Utomjording', emoji: '👽', health: 18, tables: [8, 9], requirement: 'level8' },
-            { id: 'phoenix', name: 'Fenix', emoji: '🔥', health: 20, tables: [1,2,3,4,5,6,7,8,9,10], requirement: 'level10', smart: true }
+            {
+                id: 'dragon', name: 'Drake', emoji: '🐉', health: 10,
+                tables: [2, 3],           // For multiplication
+                range: { min: 1, max: 10 }, // For addition/subtraction
+                kompisTal: 10,             // For tiokompisar (10-kompisar)
+                unlocked: true
+            },
+            {
+                id: 'wizard', name: 'Trollkarl', emoji: '🧙', health: 12,
+                tables: [4, 5],
+                range: { min: 1, max: 15 },
+                kompisTal: 10,
+                unlocked: true
+            },
+            {
+                id: 'robot', name: 'Robot', emoji: '🤖', health: 15,
+                tables: [6, 7],
+                range: { min: 1, max: 20 },
+                kompisTal: 20,              // Tjugokompisar!
+                requirement: 'level5'
+            },
+            {
+                id: 'alien', name: 'Utomjording', emoji: '👽', health: 18,
+                tables: [8, 9],
+                range: { min: 5, max: 50 },
+                kompisTal: 20,
+                requirement: 'level8'
+            },
+            {
+                id: 'phoenix', name: 'Fenix', emoji: '🔥', health: 20,
+                tables: [1,2,3,4,5,6,7,8,9,10],
+                range: { min: 10, max: 100 },
+                kompisTal: 100,             // Hundrakompisar!
+                requirement: 'level10',
+                smart: true
+            }
         ];
 
         let currentBoss = null;
@@ -2316,9 +2347,42 @@
             return false;
         }
 
+        function getBossDifficultyText(boss) {
+            switch (currentMathType) {
+                case 'addition':
+                    if (boss.smart) return '🧠 Svåraste tal!';
+                    return `➕ Tal ${boss.range.min}-${boss.range.max}`;
+                case 'subtraction':
+                    if (boss.smart) return '🧠 Svåraste tal!';
+                    return `➖ Tal ${boss.range.min}-${boss.range.max}`;
+                case 'tiokompisar':
+                    if (boss.smart) return `🧠 Alla ${boss.kompisTal}-kompisar!`;
+                    return `🔟 ${boss.kompisTal}-kompisar`;
+                default: // multiplication
+                    if (boss.smart) return '🧠 Dina svagaste tal!';
+                    if (boss.tables.length === 10) return 'Alla tabeller (1-10)';
+                    return boss.tables.map(t => t + ':ans').join(' och ') + ' tabell';
+            }
+        }
+
+        function getMathTypeLabel() {
+            switch (currentMathType) {
+                case 'addition': return '➕ Plus';
+                case 'subtraction': return '➖ Minus';
+                case 'tiokompisar': return '🔟 Kompisar';
+                default: return '✖️ Gånger';
+            }
+        }
+
         function showBossSelect() {
             const container = document.getElementById('bossOptions');
             container.innerHTML = '';
+
+            // Show current math type at top
+            const header = document.createElement('div');
+            header.style.cssText = 'margin-bottom: 15px; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;';
+            header.innerHTML = `<strong>Räknesätt:</strong> ${getMathTypeLabel()}`;
+            container.appendChild(header);
 
             bosses.forEach(boss => {
                 const unlocked = isBossUnlocked(boss);
@@ -2330,21 +2394,14 @@
                     border-radius: 15px; padding: 15px; margin: 10px 0;
                     opacity: ${unlocked ? 1 : 0.5}; cursor: ${unlocked ? 'pointer' : 'not-allowed'};
                 `;
-                // Format tables nicely
-                let tablesText;
-                if (boss.smart) {
-                    tablesText = '🧠 Dina svagaste tal!';
-                } else if (boss.tables.length === 10) {
-                    tablesText = 'Alla tabeller (1-10)';
-                } else {
-                    tablesText = boss.tables.map(t => t + ':ans').join(' och ') + ' tabell';
-                }
+
+                const difficultyText = getBossDifficultyText(boss);
 
                 card.innerHTML = `
                     <div style="font-size: 2em;">${boss.emoji}</div>
                     <div style="font-weight: bold; color: #764ba2;">${boss.name}</div>
                     <div style="font-size: 0.8em; color: #666;">
-                        ${unlocked ? `❤️ ${boss.health} HP | ${tablesText}` : '🔒 Lås upp på högre nivå'}
+                        ${unlocked ? `❤️ ${boss.health} HP | ${difficultyText}` : '🔒 Lås upp på högre nivå'}
                     </div>
                     ${defeated ? '<div style="color: #00b894; font-size: 0.9em;">✓ Besegrad!</div>' : ''}
                 `;
@@ -2708,19 +2765,52 @@
             let answer;
             let key;
 
-            // Boss mode always uses multiplication
+            // Boss mode - uses selected math type
             if (gameState.mode === 'boss') {
-                if (currentBoss && currentBoss.id === 'phoenix') {
-                    selected = selectSmartQuestion();
-                } else {
-                    selected = {
-                        num1: currentBoss.tables[Math.floor(Math.random() * currentBoss.tables.length)],
-                        num2: Math.floor(Math.random() * 10) + 1
-                    };
+                switch (currentMathType) {
+                    case 'addition': {
+                        const range = currentBoss.range;
+                        const num1 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+                        const num2 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+                        answer = num1 + num2;
+                        questionText = `${num1} + ${num2} = ?`;
+                        key = `boss_${num1}+${num2}`;
+                        selected = { num1, num2 };
+                        break;
+                    }
+                    case 'subtraction': {
+                        const range = currentBoss.range;
+                        let num1 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+                        let num2 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+                        if (num2 > num1) [num1, num2] = [num2, num1];
+                        answer = num1 - num2;
+                        questionText = `${num1} − ${num2} = ?`;
+                        key = `boss_${num1}-${num2}`;
+                        selected = { num1, num2 };
+                        break;
+                    }
+                    case 'tiokompisar': {
+                        const target = currentBoss.kompisTal;
+                        const num1 = Math.floor(Math.random() * (target - 1)) + 1; // 1 to target-1
+                        answer = target - num1;
+                        questionText = `${num1} + ? = ${target}`;
+                        key = `boss_kompis_${target}_${num1}`;
+                        selected = { num1, num2: answer };
+                        break;
+                    }
+                    default: // multiplication
+                        if (currentBoss && currentBoss.id === 'phoenix') {
+                            selected = selectSmartQuestion();
+                        } else {
+                            selected = {
+                                num1: currentBoss.tables[Math.floor(Math.random() * currentBoss.tables.length)],
+                                num2: Math.floor(Math.random() * 10) + 1
+                            };
+                        }
+                        answer = selected.num1 * selected.num2;
+                        questionText = `${selected.num1} × ${selected.num2} = ?`;
+                        key = `${selected.num1}x${selected.num2}`;
                 }
-                answer = selected.num1 * selected.num2;
-                questionText = `${selected.num1} × ${selected.num2} = ?`;
-                key = `${selected.num1}x${selected.num2}`;
             } else {
                 // Practice mode - use selected math type
                 switch (currentMathType) {
