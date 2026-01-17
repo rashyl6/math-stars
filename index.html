@@ -1379,9 +1379,9 @@
             <div class="math-type-selector" style="margin: 15px 0;">
                 <div style="color: #666; font-size: 0.9em; margin-bottom: 8px;">Välj räknesätt:</div>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-                    <button class="math-type-btn active" data-type="multiplication" onclick="selectMathType('multiplication')">✖️ Gånger</button>
-                    <button class="math-type-btn" data-type="addition" onclick="selectMathType('addition')">➕ Plus</button>
-                    <button class="math-type-btn" data-type="subtraction" onclick="selectMathType('subtraction')">➖ Minus</button>
+                    <button class="math-type-btn active" data-type="multiplication" onclick="selectMathType('multiplication')">✖️ Multiplikation</button>
+                    <button class="math-type-btn" data-type="addition" onclick="selectMathType('addition')">➕ Addition</button>
+                    <button class="math-type-btn" data-type="subtraction" onclick="selectMathType('subtraction')">➖ Subtraktion</button>
                     <button class="math-type-btn" data-type="tiokompisar" onclick="selectMathType('tiokompisar')">🔟 Tiokompisar</button>
                 </div>
                 <!-- Difficulty selector for plus/minus -->
@@ -2576,10 +2576,10 @@
 
         function getMathTypeLabel() {
             switch (currentMathType) {
-                case 'addition': return '➕ Plus';
-                case 'subtraction': return '➖ Minus';
-                case 'tiokompisar': return '🔟 Kompisar';
-                default: return '✖️ Gånger';
+                case 'addition': return '➕ Addition';
+                case 'subtraction': return '➖ Subtraktion';
+                case 'tiokompisar': return '🔟 Tiokompisar';
+                default: return '✖️ Multiplikation';
             }
         }
 
