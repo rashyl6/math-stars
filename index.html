@@ -157,6 +157,7 @@
         }
 
         .container {
+            position: relative;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -1185,6 +1186,26 @@
             font-size: 0.95em;
         }
 
+        .sound-toggle-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.4em;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .sound-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
         /* Leaderboard Styles */
         .leaderboard {
             margin: 15px 0;
@@ -1337,6 +1358,7 @@
                     <div class="profile-coins">💰 <span id="currentCoins">0</span> poäng</div>
                     <button class="nav-btn switch-profile-btn" onclick="showScreen('loginScreen'); loadExistingProfiles();">Byt profil</button>
                 </div>
+                <button class="sound-toggle-btn" id="soundToggle" onclick="toggleSound()" title="Ljud på/av">🔊</button>
             </div>
 
             <div class="daily-goal">
@@ -1373,11 +1395,11 @@
                 </div>
             </div>
 
-            <button class="start-btn" onclick="startGame('practice')">▶️ Öva</button>
+            <button class="start-btn" onclick="showPracticeSetup()">▶️ Öva</button>
             <button class="mode-btn-large boss-btn" onclick="showBossSelect()">🐉 Bossutmaning</button>
 
             <!-- Shop Preview Card -->
-            <div class="shop-preview" id="shopPreview" onclick="showScreen('settingsScreen'); setTimeout(renderThemeSelector, 100);">
+            <div class="shop-preview" id="shopPreview" onclick="showScreen('shopScreen'); renderThemeSelector();">
                 <div class="shop-preview-header">
                     <span>🎨 Skin Shop</span>
                     <span class="shop-preview-arrow">→</span>
@@ -1390,7 +1412,6 @@
             <div style="margin-top: 15px;">
                 <button class="nav-btn" onclick="showScreen('leaderboardScreen')">🏆 Topplista</button>
                 <button class="nav-btn" onclick="showScreen('statsScreen')">📊 Statistik</button>
-                <button class="nav-btn" onclick="showScreen('settingsScreen')">⚙️ Inställningar</button>
             </div>
         </div>
 
@@ -1411,25 +1432,33 @@
             <button class="nav-btn" onclick="showScreen('startScreen')">🏠 Tillbaka</button>
         </div>
 
-        <!-- Settings Screen -->
-        <div class="screen" id="settingsScreen">
-            <h2 class="title">⚙️ Inställningar</h2>
+        <!-- Shop Screen -->
+        <div class="screen" id="shopScreen">
+            <h2 class="title">🎨 Skin Shop</h2>
 
-            <h3 style="margin: 15px 0 10px; color: #666;">Välj tabeller att öva</h3>
-            <div class="table-select" id="tableSelect"></div>
-
-            <h3 style="margin: 15px 0 10px; color: #666;">Ljud</h3>
-            <button class="nav-btn" id="soundToggle" onclick="toggleSound()">🔊 Ljud på</button>
-
-            <h3 style="margin: 20px 0 10px; color: var(--secondary);">🎨 Skin Shop</h3>
             <div class="coins-display">
                 <span>💰</span>
                 <span>Dina poäng: <span id="shopCoins">0</span></span>
             </div>
+
             <div class="theme-selector" id="themeSelector"></div>
 
-            <br>
-            <button class="nav-btn" onclick="showScreen('startScreen')">🏠 Tillbaka</button>
+            <button class="nav-btn" onclick="showScreen('startScreen')" style="margin-top: 20px;">🏠 Tillbaka</button>
+        </div>
+
+        <!-- Practice Setup Screen -->
+        <div class="screen" id="practiceSetupScreen">
+            <h2 class="title">📚 Välj vad du vill öva</h2>
+
+            <div id="tableSelectSection">
+                <h3 style="margin: 15px 0 10px; color: #666;">Välj tabeller:</h3>
+                <div class="table-select" id="tableSelect"></div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="start-btn" onclick="startGame('practice')">▶️ Starta övning</button>
+                <button class="nav-btn" onclick="showScreen('startScreen')" style="margin-top: 10px;">🏠 Tillbaka</button>
+            </div>
         </div>
 
         <!-- Stats Screen -->
@@ -2012,11 +2041,10 @@
             initFactStats();
             checkDailyReset();
             applyTheme(gameState.currentTheme);
-            setupTableSelect();
             renderThemeSelector();
             updateDailyProgress();
             updateDailyChallengeCard();
-            document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊 Ljud på' : '🔇 Ljud av';
+            document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊' : '🔇';
             updateProfileDisplay();
             showScreen('startScreen');
         }
@@ -2776,7 +2804,7 @@
 
         function toggleSound() {
             gameState.soundEnabled = !gameState.soundEnabled;
-            document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊 Ljud på' : '🔇 Ljud av';
+            document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊' : '🔇';
             saveGameState();
         }
 
@@ -3328,6 +3356,18 @@
             });
         }
 
+        function showPracticeSetup() {
+            // Show table selection only for multiplication
+            const tableSection = document.getElementById('tableSelectSection');
+            if (currentMathType === 'multiplication') {
+                tableSection.style.display = 'block';
+                setupTableSelect();
+            } else {
+                tableSection.style.display = 'none';
+            }
+            showScreen('practiceSetupScreen');
+        }
+
         function setupTableSelect() {
             const container = document.getElementById('tableSelect');
             container.innerHTML = '';
@@ -3449,11 +3489,10 @@
                 initFactStats();
                 checkDailyReset();
                 applyTheme(gameState.currentTheme);
-                setupTableSelect();
                 renderThemeSelector();
                 updateDailyProgress();
                 updateDailyChallengeCard();
-                document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊 Ljud på' : '🔇 Ljud av';
+                document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊' : '🔇';
                 showScreen('startScreen');
             } else {
                 loadExistingProfiles();
