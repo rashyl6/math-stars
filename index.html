@@ -237,30 +237,6 @@
             letter-spacing: 0.5px;
         }
 
-        .streak-display {
-            background: linear-gradient(135deg, rgba(255,154,158,0.9) 0%, rgba(254,207,239,0.9) 100%);
-            border-radius: 20px;
-            padding: 12px 20px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 4px 15px rgba(255,154,158,0.3);
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-
-        .streak-fire {
-            font-size: 1.5em;
-            animation: bounce 0.5s ease infinite alternate;
-            filter: drop-shadow(0 2px 4px rgba(255,100,100,0.5));
-        }
-
-        @keyframes bounce {
-            from { transform: scale(1) rotate(-5deg); }
-            to { transform: scale(1.2) rotate(5deg); }
-        }
-
         .question-area {
             background: linear-gradient(135deg, rgba(168,237,234,0.9) 0%, rgba(254,214,227,0.9) 100%);
             border-radius: 24px;
@@ -1505,23 +1481,19 @@
 
             <div class="stats-bar">
                 <div class="stat">
-                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-value">💰 <span id="totalPoints">0</span></div>
                     <div class="stat-label">Poäng</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="correct">0</div>
-                    <div class="stat-label">Rätt</div>
+                    <div class="stat-value"><span id="correct">0</span>/<span id="total">0</span></div>
+                    <div class="stat-label">Rätt svar</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="total">0</div>
-                    <div class="stat-label">Totalt</div>
+                    <div class="stat-value">🔥 <span id="streak">0</span></div>
+                    <div class="stat-label">Svit</div>
                 </div>
             </div>
 
-            <div class="streak-display">
-                <span class="streak-fire" id="streakFire">🔥</span>
-                <span>Svit: <strong id="streak">0</strong></span>
-            </div>
 
             <div class="smart-indicator" id="smartIndicator">
                 🧠 Smart övning aktiv
@@ -1632,8 +1604,8 @@
                     <div class="stat-label">Träffsäkerhet</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="roundPoints">0</div>
-                    <div class="stat-label">Poäng</div>
+                    <div class="stat-value">+<span id="roundPoints">0</span></div>
+                    <div class="stat-label">Poäng tjänade</div>
                 </div>
             </div>
 
@@ -1838,21 +1810,23 @@
 
         async function initializeGameStateForProfile(profileId) {
             // Check Firebase first, then localStorage
-            try {
-                const snapshot = await database.ref('gameStates/' + profileId).once('value');
-                if (snapshot.exists()) {
-                    gameState = { ...getDefaultGameState(), ...snapshot.val() };
-                    const factsSnapshot = await database.ref('factStats/' + profileId).once('value');
-                    if (factsSnapshot.exists()) {
-                        factStats = factsSnapshot.val();
+            if (firebaseEnabled && database) {
+                try {
+                    const snapshot = await database.ref('gameStates/' + profileId).once('value');
+                    if (snapshot.exists()) {
+                        gameState = { ...getDefaultGameState(), ...snapshot.val() };
+                        const factsSnapshot = await database.ref('factStats/' + profileId).once('value');
+                        if (factsSnapshot.exists()) {
+                            factStats = factsSnapshot.val();
+                        }
+                        // Update localStorage cache
+                        localStorage.setItem(`mathStars_${profileId}_state`, JSON.stringify(gameState));
+                        localStorage.setItem(`mathStars_${profileId}_facts`, JSON.stringify(factStats));
+                        return;
                     }
-                    // Update localStorage cache
-                    localStorage.setItem(`mathStars_${profileId}_state`, JSON.stringify(gameState));
-                    localStorage.setItem(`mathStars_${profileId}_facts`, JSON.stringify(factStats));
-                    return;
+                } catch (error) {
+                    console.error('Firebase load error:', error);
                 }
-            } catch (error) {
-                console.error('Firebase load error:', error);
             }
 
             // Fallback to localStorage
@@ -2090,14 +2064,14 @@
             document.getElementById('currentCoins').textContent = gameState.totalScore;
         }
 
-        function loadCurrentProfile() {
+        async function loadCurrentProfile() {
             const currentProfileId = localStorage.getItem('mathStarsCurrentProfile');
             const profiles = JSON.parse(localStorage.getItem('mathStarsProfiles') || '[]');
 
             if (currentProfileId) {
                 currentProfile = profiles.find(p => p.id === currentProfileId);
                 if (currentProfile) {
-                    initializeGameStateForProfile(currentProfileId);
+                    await initializeGameStateForProfile(currentProfileId);
                     updateProfileDisplay();
                     return true;
                 }
@@ -3267,11 +3241,10 @@
         }
 
         function updateDisplay() {
-            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('totalPoints').textContent = gameState.totalScore;
             document.getElementById('correct').textContent = gameState.correct;
             document.getElementById('total').textContent = gameState.total;
             document.getElementById('streak').textContent = gameState.streak;
-            document.getElementById('streakFire').style.display = gameState.streak > 0 ? 'inline' : 'none';
             document.getElementById('levelText').textContent = `Nivå ${gameState.level}`;
             document.getElementById('levelTitle').textContent = levelTitles[Math.min(gameState.level - 1, levelTitles.length - 1)];
             document.getElementById('xpBar').style.width = `${(gameState.xp / gameState.xpToNext) * 100}%`;
@@ -3415,45 +3388,43 @@
             localStorage.setItem(`mathStars_${currentProfile.id}_facts`, JSON.stringify(factStats));
 
             // Also save to Firebase (async, for cross-device sync)
-            database.ref('gameStates/' + currentProfile.id).set(gameState)
-                .catch(err => console.error('Firebase save error:', err));
-            database.ref('factStats/' + currentProfile.id).set(factStats)
-                .catch(err => console.error('Firebase factStats save error:', err));
+            if (firebaseEnabled && database) {
+                database.ref('gameStates/' + currentProfile.id).set(gameState)
+                    .catch(err => console.error('Firebase save error:', err));
+                database.ref('factStats/' + currentProfile.id).set(factStats)
+                    .catch(err => console.error('Firebase factStats save error:', err));
+            }
         }
 
         async function loadGameState() {
             if (!currentProfile) return;
 
-            try {
-                // Try to load from Firebase first (most up-to-date)
-                const stateSnapshot = await database.ref('gameStates/' + currentProfile.id).once('value');
-                const factsSnapshot = await database.ref('factStats/' + currentProfile.id).once('value');
+            // Try Firebase first if available
+            if (firebaseEnabled && database) {
+                try {
+                    const stateSnapshot = await database.ref('gameStates/' + currentProfile.id).once('value');
+                    const factsSnapshot = await database.ref('factStats/' + currentProfile.id).once('value');
 
-                if (stateSnapshot.exists()) {
-                    gameState = { ...gameState, ...stateSnapshot.val() };
-                    // Also update localStorage cache
-                    localStorage.setItem(`mathStars_${currentProfile.id}_state`, JSON.stringify(gameState));
-                } else {
-                    // Fallback to localStorage
-                    const saved = localStorage.getItem(`mathStars_${currentProfile.id}_state`);
-                    if (saved) gameState = { ...gameState, ...JSON.parse(saved) };
-                }
+                    if (stateSnapshot.exists()) {
+                        gameState = { ...gameState, ...stateSnapshot.val() };
+                        localStorage.setItem(`mathStars_${currentProfile.id}_state`, JSON.stringify(gameState));
+                    }
 
-                if (factsSnapshot.exists()) {
-                    factStats = factsSnapshot.val();
-                    localStorage.setItem(`mathStars_${currentProfile.id}_facts`, JSON.stringify(factStats));
-                } else {
-                    const savedFacts = localStorage.getItem(`mathStars_${currentProfile.id}_facts`);
-                    if (savedFacts) factStats = JSON.parse(savedFacts);
+                    if (factsSnapshot.exists()) {
+                        factStats = factsSnapshot.val();
+                        localStorage.setItem(`mathStars_${currentProfile.id}_facts`, JSON.stringify(factStats));
+                    }
+                    return;
+                } catch (error) {
+                    console.error('Error loading from Firebase:', error);
                 }
-            } catch (error) {
-                console.error('Error loading from Firebase:', error);
-                // Fallback to localStorage
-                const saved = localStorage.getItem(`mathStars_${currentProfile.id}_state`);
-                if (saved) gameState = { ...gameState, ...JSON.parse(saved) };
-                const savedFacts = localStorage.getItem(`mathStars_${currentProfile.id}_facts`);
-                if (savedFacts) factStats = JSON.parse(savedFacts);
             }
+
+            // Fallback to localStorage
+            const saved = localStorage.getItem(`mathStars_${currentProfile.id}_state`);
+            if (saved) gameState = { ...gameState, ...JSON.parse(saved) };
+            const savedFacts = localStorage.getItem(`mathStars_${currentProfile.id}_facts`);
+            if (savedFacts) factStats = JSON.parse(savedFacts);
         }
 
         function checkDailyReset() {
@@ -3468,13 +3439,13 @@
         }
 
         // ==================== INITIALIZATION ====================
-        function init() {
+        async function init() {
             initFirebase();
             renderAvatarGrid();
 
             document.getElementById('nameInput').addEventListener('input', checkCanCreate);
 
-            if (loadCurrentProfile()) {
+            if (await loadCurrentProfile()) {
                 initFactStats();
                 checkDailyReset();
                 applyTheme(gameState.currentTheme);
